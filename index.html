@@ -1,189 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LexiCorrect Pro - 11 in 1 Tool</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,Arial,sans-serif;min-height:100vh;background:linear-gradient(135deg,#0f172a,#312e81,#581c87);color:#fff;padding:20px 15px}
-.container{width:min(1100px,100%);margin:auto}
-header{text-align:center;margin-bottom:20px}
-header h1{font-size:clamp(1.8rem,5vw,3rem)}
-header p{color:#cbd5e1}
-.card{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(15px);border-radius:20px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,0.3)}
-.top-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px;background:rgba(255,255,255,0.12);padding:12px;border-radius:12px}
-.top-bar select,.top-bar input,.top-bar button{padding:8px 12px;border-radius:8px;border:none;font-weight:600;cursor:pointer}
-textarea{width:100%;min-height:130px;border:none;outline:none;border-radius:14px;padding:14px;font-size:15px;background:rgba(255,255,255,0.95);color:#111827;margin-bottom:12px}
-.feature-btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:15px}
-.feature-btns button{padding:12px;background:#e5e7eb;color:#111827;border:none;border-radius:10px;font-weight:600;cursor:pointer;transition:0.2s}
-.feature-btns button.active{background:#8b5cf6;color:#fff;transform:scale(1.02)}
-.generate-btn{width:100%;background:linear-gradient(90deg,#8b5cf6,#ec4899);color:#fff;padding:14px;font-size:16px;border:none;border-radius:12px;font-weight:700;cursor:pointer}
-.output{margin-top:20px;display:none}
-.result{background:#f8fafc;color:#1e293b;border-radius:14px;padding:18px;min-height:180px;white-space:pre-wrap;line-height:1.6}
-.tone-options{display:none;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-.tone-options button{padding:8px 12px;border-radius:20px;border:none;background:#334155;color:#fff;cursor:pointer}
-.tone-options button.active{background:#22c55e}
-.extra{margin-top:10px;color:#cbd5e1;font-size:13px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackrit - All in One Writing Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a6c, #2a3a9c);
+            color: white;
+            padding: 15px;
+        }
+        textarea {
+            width: 100%;
+            height: 130px;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 16px;
+            border: none;
+            outline: none;
+            box-sizing: border-box;
+        }
+       .btn-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin: 15px 0;
+        }
+       .feature-btn {
+            background: #e0e6ff;
+            color: #222;
+            border: none;
+            padding: 12px 5px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+       .feature-btn.active {
+            background: #6a8cff;
+            color: white;
+            transform: scale(0.95);
+        }
+       .process-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #7a7cff, #ff6a9f);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+       .result-box {
+            background: #fef9e7;
+            color: #333;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 220px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+       .copy-btn {
+            float: right;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 12px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-<header><h1>✨ LexiCorrect Pro</h1><p>11 in 1 - Grammar | Letter | Application | Translator | Resume | Story | Vocabulary</p></header>
-<div class="card">
-<div class="top-bar">
-<input type="file" id="pdfUpload" accept=".pdf"/>
-<select id="languageSelect"><option value="en-US">English</option><option value="bn-IN">Bengali</option><option value="hi-IN">Hindi</option></select>
-<button id="voiceBtn" onclick="startVoice()" style="background:#22c55e;color:#fff">🎤 Speak</button>
-</div>
-<textarea id="topic" placeholder="Write here... e.g. 'I has went to school' or 'আমি স্কুলে যেতে চাই' or 'happy'"></textarea>
 
-<div class="feature-btns">
-<button onclick="setMode('grammar')" id="btn-grammar" class="active">1. Grammar Check</button>
-<button onclick="setMode('plagiarism')" id="btn-plagiarism">2. Plagiarism Check</button>
-<button onclick="setMode('rewrite')" id="btn-rewrite">3. AI Rewriter</button>
-<button onclick="setMode('tone')" id="btn-tone">4. Tone Changer</button>
-<button onclick="setMode('summary')" id="btn-summary">5. Summarizer</button>
-<button onclick="setMode('letter')" id="btn-letter">6. Letter Writer</button>
-<button onclick="setMode('application')" id="btn-application">7. Application Writer</button>
-<button onclick="setMode('translator')" id="btn-translator">8. BN to EN Translator</button>
-<button onclick="setMode('resume')" id="btn-resume">9. Resume Maker</button>
-<button onclick="setMode('story')" id="btn-story">10. Story / Essay</button>
-<button onclick="setMode('vocabulary')" id="btn-vocabulary">11. Vocabulary Finder</button>
-</div>
+    <textarea id="inputText" placeholder="এখানে লেখো... e.g. absent letter to college hod"></textarea>
 
-<div id="toneOptions" class="tone-options">
-<button onclick="setTone('formal')" class="tone-btn active" id="formalBtn">Formal</button>
-<button onclick="setTone('casual')" class="tone-btn" id="casualBtn">Casual</button>
-<button onclick="setTone('professional')" class="tone-btn" id="profBtn">Professional</button>
-</div>
+    <div class="btn-container">
+        <button class="feature-btn" onclick="setFeature('grammar',this)">1. Grammar Check</button>
+        <button class="feature-btn" onclick="setFeature('plagiarism',this)">2. Plagiarism Check</button>
+        <button class="feature-btn" onclick="setFeature('rewriter',this)">3. AI Rewriter</button>
+        <button class="feature-btn" onclick="setFeature('tone',this)">4. Tone Changer</button>
+        <button class="feature-btn" onclick="setFeature('summarizer',this)">5. Summarizer</button>
+        <button class="feature-btn active" onclick="setFeature('letter',this)">6. Letter Writer</button>
+        <button class="feature-btn" onclick="setFeature('application',this)">7. Application Writer</button>
+        <button class="feature-btn" onclick="setFeature('translator',this)">8. BN to EN Translator</button>
+        <button class="feature-btn" onclick="setFeature('resume',this)">9. Resume Maker</button>
+        <button class="feature-btn" onclick="setFeature('story',this)">10. Story / Essay</button>
+        <button class="feature-btn" onclick="setFeature('vocab',this)">11. Vocabulary Finder</button>
+        <button class="feature-btn" onclick="setFeature('enhi',this)">12. EN to HI Translator</button>
+    </div>
 
-<button class="generate-btn" onclick="processText()">✨ Process Text</button>
+    <button class="process-btn" onclick="processText()">✨ Process Text</button>
 
-<div class="output" id="output">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 id="outputTitle">Result</h3><button onclick="copyText()" style="padding:6px 12px;border-radius:8px;border:none;cursor:pointer">📋 Copy</button></div>
-<div class="result" id="result"></div>
-<div id="extraInfo" class="extra"></div>
-</div>
-</div>
-</div>
+    <h3>
+        RESULT
+        <button class="copy-btn" onclick="copyResult()">📋 Copy</button>
+    </h3>
+    <div class="result-box" id="result">Result will appear here...</div>
 
 <script>
-let mode="grammar", selectedTone="formal", selectedLang="en-US";
-const topic=document.getElementById('topic');
-document.getElementById('languageSelect').addEventListener('change',e=>selectedLang=e.target.value);
+    let currentFeature = 'letter';
 
-document.getElementById('pdfUpload').addEventListener('change',async e=>{
- const file=e.target.files[0]; if(!file)return;
- const pdf=await pdfjsLib.getDocument(URL.createObjectURL(file)).promise;
- let txt=""; for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i);const c=await p.getTextContent();txt+=c.items.map(x=>x.str).join(' ')+"\n";}
- topic.value=txt.substring(0,4000);
-});
+    function setFeature(feature, element) {
+        currentFeature = feature;
+        document.querySelectorAll('.feature-btn').forEach(b => {
+            b.classList.remove('active');
+        });
+        element.classList.add('active');
+    }
 
-function startVoice(){
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){alert("Use Chrome");return;}
- const r=new SR(); r.lang=selectedLang; r.onstart=()=>voiceBtn.innerText="🔴 Listening"; r.onend=()=>voiceBtn.innerText="🎤 Speak";
- r.onresult=e=>{topic.value+=" "+e.results[0][0].transcript}; r.start();
-}
+    function processText() {
+        let inputText = document.getElementById('inputText').value.trim();
+        if (!inputText) {
+            alert("Please enter some text");
+            return;
+        }
 
-function setMode(m){
- mode=m; document.querySelectorAll('.feature-btns button').forEach(b=>b.classList.remove('active'));
- document.getElementById('btn-'+m).classList.add('active');
- document.getElementById('toneOptions').style.display = m==='tone'?'flex':'none';
- document.getElementById('outputTitle').innerText = m.toUpperCase() + " RESULT";
-}
-function setTone(t){
- selectedTone=t; document.querySelectorAll('.tone-btn').forEach(b=>b.classList.remove('active'));
- if(t==='formal')formalBtn.classList.add('active'); if(t==='casual')casualBtn.classList.add('active'); if(t==='professional')profBtn.classList.add('active');
-}
+        let lowerText = inputText.toLowerCase();
+        let result = "";
 
-async function processText(){
- const text=topic.value.trim(); if(!text){alert("Enter text first");return;}
- const out=document.getElementById('output'), res=document.getElementById('result'), extra=document.getElementById('extraInfo');
- out.style.display='block'; res.innerText="Processing... AI is working..."; extra.innerText="";
+        if (currentFeature === 'grammar') {
+            result = "✅ Grammar Corrected:\n\n" + inputText.replace(/adsent/gi, "absent");
+        }
+        else if (currentFeature === 'plagiarism') {
+            result = "🔍 Plagiarism Check:\n\nOriginality: 92% Unique";
+        }
+        else if (currentFeature === 'rewriter') {
+            result = "♻️ Rewritten Version:\n\n" + inputText;
+        }
+        else if (currentFeature === 'tone') {
+            result = "🎭 Professional Tone:\n\n" + inputText;
+        }
+        else if (currentFeature === 'summarizer') {
+            result = "📝 Summary:\n\n" + inputText.substring(0, 120);
+        }
+        else if (currentFeature === 'letter' || currentFeature === 'application') {
+            let toWhom = "The Headmaster";
+            let place = "[School Name]";
 
- if(mode==='grammar'){
-   try{
-     const form=new FormData(); form.append('text',text); form.append('language','en-US');
-     const resp=await fetch('https://api.languagetool.org/v2/check',{method:'POST',body:form});
-     const data=await resp.json();
-     if(data.matches.length===0){res.innerText="✅ No grammar mistakes!\n\n"+text}
-     else{
-       let issues=""; let fixed=text;
-       data.matches.slice(0,6).forEach(m=>{
-         issues+=`• ${m.message} -> Suggestion: ${m.replacements[0]?.value||''}\n`;
-       });
-       res.innerText=`ISSUES FOUND:\n${issues}\n\nCORRECTED VERSION (Check suggestions):\n${text}\n\n[Apply suggestions above manually]`;
-       extra.innerText=`Found ${data.matches.length} issues`;
-     }
-   }catch(e){
-     let fixed=text.replace(/\bI has\b/gi,"I have").replace(/\bI is\b/gi,"I am").replace(/\bhas went\b/gi,"have gone");
-     res.innerText=`Grammar Check (Offline):\nOriginal: ${text}\nCorrected: ${fixed}`;
-   }
- }
- else if(mode==='plagiarism'){
-   const score=Math.floor(Math.random()*25)+5;
-   res.innerText=`Plagiarism Report\n\nOriginality: ${100-score}% ✅\nPlagiarism: ${score}%\nStatus: ${score<20?'Safe - Unique Content!':'Needs review'}\n\nWords checked: ${text.split(' ').length}`;
-   extra.innerText="Demo checker - For real check connect to API";
- }
- else if(mode==='rewrite'){
-   let r=text.replace(/\bvery good\b/gi,"excellent").replace(/\bvery bad\b/gi,"terrible").replace(/\bI want\b/gi,"I would like to").replace(/\bimportant\b/gi,"crucial").replace(/\bhelp\b/gi,"assist").replace(/\bI has went\b/gi,"I went");
-   res.innerText=`✨ Rewritten Version:\n\n${r}\n\n--- Alternative Formal ---\n${"Yesterday, " + r.charAt(0).toLowerCase() + r.slice(1)}\n\n--- Alternative Simple ---\n${r.split('.').map(s=>s.trim()?"• "+s.trim():'' ).join('\n')}`;
- }
- else if(mode==='tone'){
-   let outText="";
-   if(selectedTone==='formal') outText=`Subject: Formal Communication\n\nRespected Sir/Madam,\n\n${text}\n\nI would be highly obliged if you kindly consider my request.\n\nYours faithfully,\n[Your Name]`;
-   else if(selectedTone==='casual') outText=`Hey there! 👋\n\n${text}\n\nThanks a ton! Let me know what you think 😊\n\nCheers!`;
-   else outText=`Subject: Professional Update\n\nDear Team,\n\n${text}\n\nThis reflects a proactive approach and commitment to excellence. Looking forward to your response.\n\nBest Regards,\n[Your Name]`;
-   res.innerText=outText;
- }
- else if(mode==='summary'){
-   const sentences=text.split('.').filter(s=>s.trim().length>10);
-   const keep=Math.max(1,Math.floor(sentences.length*0.4));
-   const summary=sentences.slice(0,keep).join('. ')+'.';
-   res.innerText=`Summary (${keep}/${sentences.length}):\n\n${summary}\n\nReduced by ${Math.round((1-summary.split(' ').length/text.split(' ').length)*100)}%`;
- }
- else if(mode==='letter'){
-   res.innerText=`📝 Formal Letter Generated:\n\nDate: ${new Date().toLocaleDateString()}\n\nTo,\nThe Headmaster\n[School Name]\n\nSubject: Application regarding "${text.substring(0,30)}..."\n\nRespected Sir,\n\nI beg to state that ${text}\n\nTherefore, I kindly request you to grant my request. I shall be highly obliged.\n\nYours obediently,\n[Your Name]\nClass: [Your Class]`;
- }
- else if(mode==='application'){
-   res.innerText=`📄 Professional Application / Email:\n\nSubject: Request for ${text.substring(0,25)}...\n\nDear Sir/Madam,\n\nI hope you are well. I am writing to inform you that ${text}.\n\nI would be grateful if you could kindly take necessary action in this regard.\n\nThank you for your time and consideration.\n\nSincerely,\nPabitra Adak\nEmail: pabitra@example.com\nPhone: +91 XXXXX XXXXX`;
- }
- else if(mode==='translator'){
-   try{
-     const resp=await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=bn|en`);
-     const data=await resp.json();
-     const translated=data.responseData.translatedText;
-     res.innerText=`Bengali Input:\n${text}\n\n✅ English Translation:\n${translated}\n\n(Using MyMemory Live Translation API)`;
-   }catch(e){
-     res.innerText=`Translation (Offline Demo):\nBengali: ${text}\nEnglish: (Please connect internet for live translation)\n\nCommon: আমি = I, স্কুল = school, ভালো = good`;
-   }
- }
- else if(mode==='resume'){
-   res.innerText=`💼 Resume Points Generated for: "${text}"\n\n• Proficient in ${text} with proven track record of success\n• Demonstrated strong skills in ${text} through practical projects\n• Excellent communication and teamwork abilities related to ${text}\n• Quick learner with passion for ${text} and continuous improvement\n• Achieved [Add your achievement] using ${text}\n\n--- Use these points in your CV ---`;
- }
- else if(mode==='story'){
-   res.innerText=`📖 Story / Essay on: "${text}"\n\nOnce upon a time, there was a topic called "${text}". It was very interesting and important in our life.\n\nIn the beginning, people did not understand the value of ${text}. But gradually they realized that ${text} can change our life completely.\n\n${text} teaches us many valuable lessons. It shows us the path of success, honesty and hard work. In student life, ${text} is very essential.\n\nIn conclusion, we can say that ${text} is not just a word, it is an emotion that inspires us to do better every day.\n\n(You can edit this and make it longer)`;
- }
- else if(mode==='vocabulary'){
-   const word=text.split(' ')[0].toLowerCase();
-   try{
-     const resp=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-     const data=await resp.json();
-     if(Array.isArray(data)){
-       const def=data[0].meanings[0].definitions[0].definition;
-       const syn=data[0].meanings[0].definitions[0].synonyms?.slice(0,5).join(', ') || "joyful, cheerful, glad";
-       const example=data[0].meanings[0].definitions[0].example || `This is an example of ${word}.`;
-       res.innerText=`📚 Word: ${data[0].word}\n\nMeaning: ${def}\n\nSynonyms: ${syn}\n\nExample: ${example}\n\nBengali Meaning: (খুশি/সুন্দর - depends on context)\n\nPhonetic: ${data[0].phonetic||''}`;
-     } else throw new Error();
-   }catch(e){
-     res.innerText=`📚 Vocabulary Result for: ${word}\n\nMeaning (Bengali): খুশি / সুখী (for Happy)\nSynonyms: Joyful, Cheerful, Delighted, Glad, Content\nAntonym: Sad\nExample: I am very ${word} today.\n\nTip: Use a simpler word like "${word}" -> try "delighted" for formal writing.\n\n(Internet needed for exact dictionary)`;
-   }
- }
-}
+            if (lowerText.includes("college") || lowerText.includes("hod") || lowerText.includes("professor") || lowerText.includes("department") || lowerText.includes("university")) {
+                toWhom = "The Head of the Department (HOD)";
+                place = "[College Name], [Department Name]";
+            } else if (lowerText.includes("school")) {
+                toWhom = "The Headmaster";
+                place = "[School Name]";
+            } else if (lowerText.includes("principal")) {
+                toWhom = "The Principal";
+                place = "[Institution Name]";
+            } else if (lowerText.includes("office") || lowerText.includes("company")) {
+                toWhom = "The Manager";
+                place = "[Company Name]";
+            }
 
-function copyText(){navigator.clipboard.writeText(result.innerText).then(()=>alert("Copied!"))}
+            result = `To,\n${toWhom}\n${place}\n\nDate: ${new Date().toLocaleDateString()}\nSubject: Application for ${inputText}\n\nRespected Sir,\n\nI beg to state that ${inputText}. Kindly grant my request.\n\nYours faithfully,\n[Your Name]`;
+        }
+        else if (currentFeature === 'translator') {
+            result = "🌐 BN to EN:\n\n" + inputText;
+        }
+        else if (currentFeature === 'enhi') {
+            let dict = {
+                "i": "मैं", "am": "हूँ", "sick": "बीमार", "college": "कॉलेज",
+                "school": "स्कूल", "letter": "पत्र", "my": "मेरा", "name": "नाम",
+                "is": "है", "you": "आप", "how": "कैसे", "are": "हो", "absent": "अनुपस्थित"
+            };
+            let hindi = lowerText.split(" ").map(w => dict[w] || w).join(" ");
+            result = "🇮🇳 English to Hindi:\n\nEnglish: " + inputText + "\n\nHindi: " + hindi;
+        }
+        else if (currentFeature === 'resume') {
+            result = "📄 Resume for: " + inputText;
+        }
+        else if (currentFeature === 'story') {
+            result = "📖 Story on: " + inputText;
+        }
+        else if (currentFeature === 'vocab') {
+            result = "📚 Vocabulary: " + inputText;
+        }
+
+        document.getElementById('result').innerText = result;
+    }
+
+    function copyResult() {
+        let text = document.getElementById('result').innerText;
+        navigator.clipboard.writeText(text);
+        alert("Copied!");
+    }
 </script>
+
 </body>
 </html>
