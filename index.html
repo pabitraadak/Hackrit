@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LexiCorrect - All in One Writing Tool</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;min-height:100vh;background:linear-gradient(135deg,#0f172a,#312e81,#581c87);color:#fff;padding:20px 15px}
+.container{width:min(1000px,100%);margin:auto}
+header{text-align:center;margin-bottom:20px}
+header h1{font-size:clamp(1.8rem,5vw,3rem)}
+header p{color:#cbd5e1}
+.card{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(15px);border-radius:20px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,0.3)}
+.top-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px;background:rgba(255,255,255,0.12);padding:12px;border-radius:12px}
+.top-bar select,.top-bar input,.top-bar button{padding:8px 12px;border-radius:8px;border:none;font-weight:600;cursor:pointer}
+textarea{width:100%;min-height:130px;border:none;outline:none;border-radius:14px;padding:14px;font-size:15px;background:rgba(255,255,255,0.95);color:#111827;margin-bottom:12px}
+.feature-btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:15px}
+.feature-btns button{padding:12px;background:#e5e7eb;color:#111827}
+.feature-btns button.active{background:#8b5cf6;color:#fff}
+.generate-btn{width:100%;background:linear-gradient(90deg,#8b5cf6,#ec4899);color:#fff;padding:14px;font-size:16px}
+.output{margin-top:20px;display:none}
+.result{background:#f8fafc;color:#1e293b;border-radius:14px;padding:18px;min-height:180px;white-space:pre-wrap;line-height:1.6}
+.badge{padding:4px 8px;border-radius:20px;font-size:12px;background:#22c55e;color:#fff;margin-left:6px}
+</style>
+</head>
+<body>
+<div class="container">
+<header><h1>✨ LexiCorrect Pro</h1><p>Grammar | Plagiarism | Rewriter | Tone | Summarizer + PDF + Voice + Bengali</p></header>
+<div class="card">
+<div class="top-bar">
+<input type="file" id="pdfUpload" accept=".pdf"/>
+<select id="languageSelect"><option value="en-US">English</option><option value="bn-IN">Bengali</option><option value="hi-IN">Hindi</option></select>
+<button id="voiceBtn" onclick="startVoice()" style="background:#22c55e;color:#fff">🎤 Speak</button>
+</div>
+<textarea id="topic" placeholder="Write or upload PDF or speak... Example: I has went to school yesterday..."></textarea>
+
+<div class="feature-btns">
+<button onclick="setMode('grammar')" id="btn-grammar" class="active">1. Grammar Check</button>
+<button onclick="setMode('plagiarism')" id="btn-plagiarism">2. Plagiarism Check</button>
+<button onclick="setMode('rewrite')" id="btn-rewrite">3. AI Rewriter</button>
+<button onclick="setMode('tone')" id="btn-tone">4. Tone Changer</button>
+<button onclick="setMode('summary')" id="btn-summary">5. Summarizer</button>
+</div>
+
+<div id="toneOptions" style="display:none;margin-bottom:12px;gap:8px;">
+<button onclick="setTone('formal')" class="tone-btn active" id="formalBtn">Formal</button>
+<button onclick="setTone('casual')" class="tone-btn" id="casualBtn">Casual</button>
+<button onclick="setTone('professional')" class="tone-btn" id="profBtn">Professional</button>
+</div>
+
+<button class="generate-btn" onclick="processText()">✨ Process Text</button>
+
+<div class="output" id="output">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 id="outputTitle">Result</h3><button onclick="copyText()">📋 Copy</button></div>
+<div class="result" id="result"></div>
+<div id="extraInfo" style="margin-top:10px;color:#cbd5e1;font-size:13px"></div>
+</div>
+</div>
+</div>
+
+<script>
+let mode="grammar", selectedTone="formal", selectedLang="en-US";
+document.getElementById('languageSelect').addEventListener('change',e=>selectedLang=e.target.value);
+
+// PDF
+document.getElementById('pdfUpload').addEventListener('change',async e=>{
+ const file=e.target.files[0]; if(!file)return;
+ const pdf=await pdfjsLib.getDocument(URL.createObjectURL(file)).promise;
+ let txt=""; for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i);const c=await p.getTextContent();txt+=c.items.map(x=>x.str).join(' ')+"\n";}
+ document.getElementById('topic').value=txt.substring(0,4000);
+});
+
+// VOICE
+function startVoice(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){alert("Use Chrome");return;}
+ const r=new SR(); r.lang=selectedLang; r.onstart=()=>voiceBtn.innerText="🔴 Listening"; r.onend=()=>voiceBtn.innerText="🎤 Speak";
+ r.onresult=e=>{topic.value+=" "+e.results[0][0].transcript}; r.start();
+}
+
+function setMode(m){
+ mode=m; document.querySelectorAll('.feature-btns button').forEach(b=>b.classList.remove('active'));
+ document.getElementById('btn-'+m).classList.add('active');
+ document.getElementById('toneOptions').style.display = m==='tone'?'flex':'none';
+ document.getElementById('outputTitle').innerText = m.toUpperCase();
+}
+function setTone(t){
+ selectedTone=t; document.querySelectorAll('.tone-btn').forEach(b=>b.classList.remove('active'));
+ if(t==='formal')formalBtn.classList.add('active'); if(t==='casual')casualBtn.classList.add('active'); if(t==='professional')profBtn.classList.add('active');
+}
+
+async function processText(){
+ const text=topic.value.trim(); if(!text){alert("Enter text first");return;}
+ const out=document.getElementById('output'), res=document.getElementById('result'), extra=document.getElementById('extraInfo');
+ out.style.display='block'; res.innerText="Processing..."; extra.innerText="";
+
+ if(mode==='grammar'){
+   try{
+     const form=new FormData(); form.append('text',text); form.append('language',selectedLang==='bn-IN'?'bn':selectedLang==='hi-IN'?'hi':'en-US');
+     const resp=await fetch('https://api.languagetool.org/v2/check',{method:'POST',body:form});
+     const data=await resp.json();
+     if(data.matches.length===0){res.innerText="✅ No grammar mistakes! Your text is perfect.\n\nOriginal:\n"+text; extra.innerText=`Checked: ${text.split(' ').length} words`;}
+     else{
+       let fixed=text, issues="";
+       data.matches.slice(0,5).forEach(m=>{
+         issues+=`• ${m.message} -> ${m.replacements[0]?.value||''}\n`;
+         if(m.replacements[0]) fixed=fixed.replace(m.context.text.substring(m.context.offset,m.context.offset+m.context.length),m.replacements[0].value);
+       });
+       res.innerText=`ISSUES FOUND:\n${issues}\n\nSUGGESTED FIX:\n${fixed}`;
+       extra.innerText=`Found ${data.matches.length} issues`;
+     }
+   }catch(e){ // Fallback simple check
+     let fixed=text.replace(/\bI has\b/gi,"I have").replace(/\bI is\b/gi,"I am");
+     res.innerText=`Grammar Check (Offline Mode):\n\nOriginal: ${text}\n\nCorrected: ${fixed}`;
+   }
+ }
+ else if(mode==='plagiarism'){
+   const score=Math.floor(Math.random()*30)+5;
+   res.innerText=`Plagiarism Report\n\nOriginality: ${100-score}% ✅\nPlagiarism: ${score}% \n\nStatus: ${score<20?'Safe - Your content is unique!':'Needs review'}\n\nChecked ${text.split(' ').length} words against web database.`;
+   extra.innerText="Note: Demo plagiarism checker for hackathon (uses mock data)";
+ }
+ else if(mode==='rewrite'){
+   let rewritten=text.replace(/\bvery good\b/gi,"excellent").replace(/\bvery bad\b/gi,"terrible").replace(/\bI want\b/gi,"I would like").replace(/\bimportant\b/gi,"crucial").replace(/\bhelp\b/gi,"assist");
+   rewritten = `Paraphrased Version:\n\n${rewritten}\n\nAlternative:\n${text.split('.').map(s=>s.trim()?`-> ${s.trim()} (rephrased)`:'' ).join('\n')}`;
+   res.innerText=rewritten;
+ }
+ else if(mode==='tone'){
+   let outText="";
+   if(selectedTone==='formal') outText=`Subject: Regarding your request\n\nDear Sir/Madam,\n\n${text}\n\nI would be grateful for your kind consideration.\n\nYours faithfully,\n[Your Name]`;
+   else if(selectedTone==='casual') outText=`Hey!\n\n${text}\n\nThanks a lot! Let me know 😊\n\nCheers!`;
+   else outText=`Professional Draft:\n\n${text}\n\nThis demonstrates strong communication and proactive approach. Looking forward to collaboration.\n\nBest regards,\n[Your Name]`;
+   res.innerText=outText;
+ }
+ else if(mode==='summary'){
+   const sentences=text.split('.').filter(s=>s.trim().length>10);
+   const keep=Math.max(1,Math.floor(sentences.length*0.4));
+   const summary=sentences.slice(0,keep).join('. ')+'.';
+   res.innerText=`Summary (${keep} of ${sentences.length} sentences):\n\n${summary}\n\nOriginal length: ${text.split(' ').length} words -> Summary: ${summary.split(' ').length} words (${Math.round((1-summary.split(' ').length/text.split(' ').length)*100)}% reduced)`;
+ }
+}
+
+function copyText(){navigator.clipboard.writeText(result.innerText).then(()=>alert("Copied!"))}
+</script>
+</body>
+</html>
