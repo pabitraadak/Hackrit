@@ -3,80 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hackrit - All in One Writing Tool</title>
+    <title>Hackrit - All in One Tool</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a6c, #2a3a9c);
+            background: #1e3ad4;
             color: white;
-            padding: 15px;
+            padding: 12px;
+            margin: 0;
         }
         textarea {
             width: 100%;
-            height: 130px;
-            border-radius: 12px;
+            height: 120px;
+            border-radius: 10px;
             padding: 15px;
             font-size: 16px;
             border: none;
             outline: none;
             box-sizing: border-box;
+            font-weight: 500;
         }
-       .btn-container {
+      .btn-container {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
             margin: 15px 0;
         }
-       .feature-btn {
-            background: #e0e6ff;
-            color: #222;
+      .feature-btn {
+            background: #e9edff;
+            color: #1a1a1a;
             border: none;
-            padding: 12px 5px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-       .feature-btn.active {
-            background: #6a8cff;
-            color: white;
-            transform: scale(0.95);
-        }
-       .process-btn {
-            width: 100%;
-            background: linear-gradient(90deg, #7a7cff, #ff6a9f);
-            color: white;
-            border: none;
-            padding: 14px;
+            padding: 16px 8px;
             border-radius: 12px;
-            font-size: 17px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            line-height: 1.2;
+            min-height: 55px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+      .feature-btn.active {
+            background: #3ab0ff;
+            color: white;
+            transform: scale(1.02);
+        }
+      .process-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #8aa8ff, #e88cff);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
             margin-bottom: 15px;
         }
-       .result-box {
+      .result-box {
             background: #fef9e7;
             color: #333;
             border-radius: 12px;
             padding: 20px;
-            min-height: 220px;
+            min-height: 250px;
             white-space: pre-wrap;
             line-height: 1.6;
-        }
-       .copy-btn {
-            float: right;
-            background: #333;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            padding: 5px 12px;
-            cursor: pointer;
+            font-size: 15px;
         }
     </style>
 </head>
 <body>
 
-    <textarea id="inputText" placeholder="এখানে লেখো... e.g. absent letter to college hod"></textarea>
+    <textarea id="inputText" placeholder="absent letter to college hod"></textarea>
 
     <div class="btn-container">
         <button class="feature-btn" onclick="setFeature('grammar',this)">1. Grammar Check</button>
@@ -84,8 +81,8 @@
         <button class="feature-btn" onclick="setFeature('rewriter',this)">3. AI Rewriter</button>
         <button class="feature-btn" onclick="setFeature('tone',this)">4. Tone Changer</button>
         <button class="feature-btn" onclick="setFeature('summarizer',this)">5. Summarizer</button>
-        <button class="feature-btn active" onclick="setFeature('letter',this)">6. Letter Writer</button>
-        <button class="feature-btn" onclick="setFeature('application',this)">7. Application Writer</button>
+        <button class="feature-btn" onclick="setFeature('letter',this)">6. Letter Writer</button>
+        <button class="feature-btn active" onclick="setFeature('application',this)">7. Application Writer</button>
         <button class="feature-btn" onclick="setFeature('translator',this)">8. BN to EN Translator</button>
         <button class="feature-btn" onclick="setFeature('resume',this)">9. Resume Maker</button>
         <button class="feature-btn" onclick="setFeature('story',this)">10. Story / Essay</button>
@@ -95,99 +92,38 @@
 
     <button class="process-btn" onclick="processText()">✨ Process Text</button>
 
-    <h3>
-        RESULT
-        <button class="copy-btn" onclick="copyResult()">📋 Copy</button>
-    </h3>
+    <h3>RESULT</h3>
     <div class="result-box" id="result">Result will appear here...</div>
 
 <script>
-    let currentFeature = 'letter';
-
-    function setFeature(feature, element) {
-        currentFeature = feature;
-        document.querySelectorAll('.feature-btn').forEach(b => {
-            b.classList.remove('active');
-        });
-        element.classList.add('active');
+    let currentFeature = 'application';
+    function setFeature(f, el){
+        currentFeature=f;
+        document.querySelectorAll('.feature-btn').forEach(b=>b.classList.remove('active'));
+        el.classList.add('active');
     }
-
-    function processText() {
-        let inputText = document.getElementById('inputText').value.trim();
-        if (!inputText) {
-            alert("Please enter some text");
-            return;
+    function processText(){
+        let input=document.getElementById('inputText').value.trim();
+        if(!input) return alert("Text লেখো");
+        let lower=input.toLowerCase();
+        let result="";
+        if(currentFeature==='letter' || currentFeature==='application'){
+            let toWhom="The Headmaster"; let place="[School Name]";
+            if(lower.includes("college")||lower.includes("hod")||lower.includes("professor")||lower.includes("department")||lower.includes("university")){
+                toWhom="The Head of the Department (HOD)"; place="[College Name], [Department Name]";
+            }else if(lower.includes("school")){toWhom="The Headmaster"; place="[School Name]";}
+            else if(lower.includes("principal")){toWhom="The Principal"; place="[Institution Name]";}
+            else if(lower.includes("office")||lower.includes("company")){toWhom="The Manager"; place="[Company Name]";}
+            result=`To,\n${toWhom}\n${place}\n\nDate: ${new Date().toLocaleDateString()}\nSubject: Application for ${input}\n\nRespected Sir,\n\nI beg to state that ${input}. Kindly grant my request.\n\nYours faithfully,\n[Your Name]`;
+        }else if(currentFeature==='enhi'){
+            let dict={"i":"मैं","am":"हूँ","sick":"बीमार","absent":"अनुपस्थित","college":"कॉलेज"};
+            let hindi=lower.split(" ").map(w=>dict[w]||w).join(" ");
+            result="🇮🇳 EN to HI:\n\nEnglish: "+input+"\n\nHindi: "+hindi;
+        }else{
+            result="Result for "+currentFeature+":\n\n"+input;
         }
-
-        let lowerText = inputText.toLowerCase();
-        let result = "";
-
-        if (currentFeature === 'grammar') {
-            result = "✅ Grammar Corrected:\n\n" + inputText.replace(/adsent/gi, "absent");
-        }
-        else if (currentFeature === 'plagiarism') {
-            result = "🔍 Plagiarism Check:\n\nOriginality: 92% Unique";
-        }
-        else if (currentFeature === 'rewriter') {
-            result = "♻️ Rewritten Version:\n\n" + inputText;
-        }
-        else if (currentFeature === 'tone') {
-            result = "🎭 Professional Tone:\n\n" + inputText;
-        }
-        else if (currentFeature === 'summarizer') {
-            result = "📝 Summary:\n\n" + inputText.substring(0, 120);
-        }
-        else if (currentFeature === 'letter' || currentFeature === 'application') {
-            let toWhom = "The Headmaster";
-            let place = "[School Name]";
-
-            if (lowerText.includes("college") || lowerText.includes("hod") || lowerText.includes("professor") || lowerText.includes("department") || lowerText.includes("university")) {
-                toWhom = "The Head of the Department (HOD)";
-                place = "[College Name], [Department Name]";
-            } else if (lowerText.includes("school")) {
-                toWhom = "The Headmaster";
-                place = "[School Name]";
-            } else if (lowerText.includes("principal")) {
-                toWhom = "The Principal";
-                place = "[Institution Name]";
-            } else if (lowerText.includes("office") || lowerText.includes("company")) {
-                toWhom = "The Manager";
-                place = "[Company Name]";
-            }
-
-            result = `To,\n${toWhom}\n${place}\n\nDate: ${new Date().toLocaleDateString()}\nSubject: Application for ${inputText}\n\nRespected Sir,\n\nI beg to state that ${inputText}. Kindly grant my request.\n\nYours faithfully,\n[Your Name]`;
-        }
-        else if (currentFeature === 'translator') {
-            result = "🌐 BN to EN:\n\n" + inputText;
-        }
-        else if (currentFeature === 'enhi') {
-            let dict = {
-                "i": "मैं", "am": "हूँ", "sick": "बीमार", "college": "कॉलेज",
-                "school": "स्कूल", "letter": "पत्र", "my": "मेरा", "name": "नाम",
-                "is": "है", "you": "आप", "how": "कैसे", "are": "हो", "absent": "अनुपस्थित"
-            };
-            let hindi = lowerText.split(" ").map(w => dict[w] || w).join(" ");
-            result = "🇮🇳 English to Hindi:\n\nEnglish: " + inputText + "\n\nHindi: " + hindi;
-        }
-        else if (currentFeature === 'resume') {
-            result = "📄 Resume for: " + inputText;
-        }
-        else if (currentFeature === 'story') {
-            result = "📖 Story on: " + inputText;
-        }
-        else if (currentFeature === 'vocab') {
-            result = "📚 Vocabulary: " + inputText;
-        }
-
-        document.getElementById('result').innerText = result;
-    }
-
-    function copyResult() {
-        let text = document.getElementById('result').innerText;
-        navigator.clipboard.writeText(text);
-        alert("Copied!");
+        document.getElementById('result').innerText=result;
     }
 </script>
-
 </body>
 </html>
