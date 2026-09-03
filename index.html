@@ -1,1542 +1,1445 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LexiCorrect - All in One Writing Tool</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <title>LexiCorrect Pro</title>
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-body{
-font-family:Inter,Arial,sans-serif;
-min-height:100vh;
-background:linear-gradient(135deg,#0f172a,#312e81,#581c87);
-color:#fff;
-padding:20px 15px
-}
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, #33215f 0%, transparent 35%),
+        radial-gradient(circle at bottom right, #142c58 0%, transparent 35%),
+        #090b18;
+      color: #ffffff;
+      padding: 25px;
+    }
 
-.container{width:min(1050px,100%);margin:auto}
+    .container {
+      max-width: 1150px;
+      margin: auto;
+    }
 
-header{text-align:center;margin-bottom:20px}
-header h1{font-size:clamp(1.8rem,5vw,3rem)}
-header p{color:#cbd5e1;margin-top:5px}
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
 
-.card{
-background:rgba(255,255,255,0.1);
-border:1px solid rgba(255,255,255,0.15);
-backdrop-filter:blur(15px);
-border-radius:20px;
-padding:20px;
-box-shadow:0 20px 50px rgba(0,0,0,0.3)
-}
+    .header h1 {
+      font-size: 38px;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-.top-bar{
-display:flex;
-flex-wrap:wrap;
-gap:8px;
-margin-bottom:15px;
-background:rgba(255,255,255,0.12);
-padding:12px;
-border-radius:12px
-}
+    .header p {
+      color: #b7bdd6;
+      font-size: 15px;
+    }
 
-.top-bar select,
-.top-bar input,
-.top-bar button{
-padding:8px 12px;
-border-radius:8px;
-border:none;
-font-weight:600;
-cursor:pointer
-}
+    .glass {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+    }
 
-textarea{
-width:100%;
-min-height:150px;
-border:none;
-outline:none;
-border-radius:14px;
-padding:14px;
-font-size:15px;
-background:rgba(255,255,255,0.95);
-color:#111827;
-margin-bottom:12px;
-resize:vertical
-}
+    .features {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      padding: 12px;
+      margin-bottom: 20px;
+    }
 
-.feature-btns{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
-gap:8px;
-margin-bottom:15px
-}
+    .feature-btn {
+      border: none;
+      padding: 13px 8px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #d8dcf5;
+      cursor: pointer;
+      transition: 0.25s;
+      font-size: 13px;
+    }
 
-.feature-btns button{
-padding:12px;
-background:#e5e7eb;
-color:#111827;
-border:none;
-border-radius:9px;
-font-weight:600;
-cursor:pointer;
-transition:.2s
-}
+    .feature-btn:hover {
+      background: rgba(255, 255, 255, 0.13);
+      transform: translateY(-2px);
+    }
 
-.feature-btns button:hover{
-transform:translateY(-1px)
-}
+    .feature-btn.active {
+      background: linear-gradient(135deg, #6d4aff, #3b82f6);
+      color: white;
+    }
 
-.feature-btns button.active{
-background:#8b5cf6;
-color:#fff
-}
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
 
-.generate-btn{
-width:100%;
-background:linear-gradient(90deg,#8b5cf6,#ec4899);
-color:#fff;
-padding:14px;
-font-size:16px;
-border:none;
-border-radius:10px;
-cursor:pointer;
-font-weight:700
-}
+    .panel {
+      padding: 22px;
+    }
 
-.output{
-margin-top:20px;
-display:none
-}
+    .panel h2 {
+      font-size: 20px;
+      margin-bottom: 7px;
+    }
 
-.result{
-background:#f8fafc;
-color:#1e293b;
-border-radius:14px;
-padding:18px;
-min-height:180px;
-white-space:pre-wrap;
-line-height:1.6;
-overflow-wrap:anywhere
-}
+    .description {
+      color: #9da5c6;
+      font-size: 13px;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
 
-.result h3{
-margin-bottom:8px
-}
+    textarea {
+      width: 100%;
+      min-height: 300px;
+      resize: vertical;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      outline: none;
+      border-radius: 14px;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.22);
+      color: white;
+      font-size: 15px;
+      line-height: 1.6;
+    }
 
-.badge{
-padding:4px 8px;
-border-radius:20px;
-font-size:12px;
-background:#22c55e;
-color:#fff;
-margin-left:6px
-}
+    textarea::placeholder {
+      color: #707795;
+    }
 
-.option-area{
-display:none;
-margin-bottom:12px;
-background:rgba(255,255,255,.08);
-padding:12px;
-border-radius:12px
-}
+    textarea:focus {
+      border-color: #7c6cff;
+      box-shadow: 0 0 0 2px rgba(124, 108, 255, 0.12);
+    }
 
-.option-area label{
-font-size:13px;
-color:#cbd5e1;
-display:block;
-margin-bottom:5px
-}
+    .counter {
+      display: flex;
+      justify-content: space-between;
+      color: #858cab;
+      font-size: 12px;
+      margin-top: 8px;
+    }
 
-.option-area input,
-.option-area select{
-width:100%;
-padding:10px;
-border-radius:8px;
-border:none;
-margin-bottom:8px
-}
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
 
-.inline-options{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-gap:8px
-}
+    select,
+    .process-btn,
+    .copy-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      cursor: pointer;
+    }
 
-.small-btn{
-padding:9px 12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-weight:600
-}
+    select {
+      background: #171a31;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-.tone-btn{
-padding:9px 12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-weight:600
-}
+    .process-btn {
+      flex: 1;
+      background: linear-gradient(135deg, #6d4aff, #3b82f6);
+      color: white;
+      font-weight: bold;
+    }
 
-.tone-btn.active{
-background:#8b5cf6;
-color:#fff
-}
+    .process-btn:hover {
+      opacity: 0.9;
+    }
 
-#extraInfo{
-color:#cbd5e1;
-font-size:13px;
-margin-top:10px
-}
+    .process-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
-.footer-note{
-text-align:center;
-font-size:12px;
-color:#cbd5e1;
-margin-top:15px
-}
-</style>
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.17);
+    }
+
+    .status {
+      min-height: 22px;
+      margin-top: 14px;
+      color: #9da5c6;
+      font-size: 13px;
+    }
+
+    .output {
+      min-height: 300px;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      color: #e8ebff;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .result-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 13px;
+      margin-bottom: 10px;
+      border-left: 3px solid #7c6cff;
+    }
+
+    .result-card strong {
+      color: #a78bfa;
+    }
+
+    .tone-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .tone-btn {
+      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      color: #dddff5;
+      padding: 9px 13px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .tone-btn.active {
+      background: #624cff;
+      color: white;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #747b9b;
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .features {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+      }
+
+      .features {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .panel {
+        padding: 15px;
+      }
+
+      textarea,
+      .output {
+        min-height: 250px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
+  <div class="container">
 
-<header>
-<h1>✨ LexiCorrect Pro</h1>
-<p>
-Grammar | Plagiarism | Rewriter | Tone | Summarizer |
-Letter | Application | Translation | Resume | Story | Vocab
-</p>
-</header>
+    <header class="header">
+      <h1>LexiCorrect Pro</h1>
+      <p>Smart writing assistance for clearer, better English</p>
+    </header>
 
-<div class="card">
+    <!-- FIVE FEATURES -->
+    <div class="features glass">
 
-<div class="top-bar">
+      <button class="feature-btn active" onclick="setMode('grammar', this)">
+        Grammar Check
+      </button>
 
-<input type="file" id="pdfUpload" accept=".pdf"/>
+      <button class="feature-btn" onclick="setMode('rewrite', this)">
+        Smart Rewriter
+      </button>
 
-<select id="languageSelect">
-<option value="en-US">English</option>
-<option value="bn-IN">Bengali</option>
-<option value="hi-IN">Hindi</option>
-</select>
+      <button class="feature-btn" onclick="setMode('tone', this)">
+        Tone Changer
+      </button>
 
-<button id="voiceBtn"
-onclick="startVoice()"
-style="background:#22c55e;color:#fff">
-🎤 Speak
-</button>
+      <button class="feature-btn" onclick="setMode('summary', this)">
+        Summarizer
+      </button>
 
-</div>
+      <button class="feature-btn" onclick="setMode('vocabulary', this)">
+        Vocabulary
+      </button>
 
-<textarea
-id="topic"
-placeholder="Write your text here... Example: I has went to school yesterday."
-></textarea>
+    </div>
 
+    <div class="workspace">
 
-<!-- ALL FEATURES -->
+      <!-- INPUT PANEL -->
+      <section class="panel glass">
 
-<div class="feature-btns">
+        <h2 id="modeTitle">Grammar Check</h2>
 
-<button onclick="setMode('grammar')" id="btn-grammar" class="active">
-1. Grammar Check
-</button>
+        <p class="description" id="modeDescription">
+          Find common grammar and writing errors using LanguageTool.
+        </p>
 
-<button onclick="setMode('plagiarism')" id="btn-plagiarism">
-2. Plagiarism Check
-</button>
+        <textarea
+          id="inputText"
+          placeholder="Enter your text here..."
+          oninput="updateCounter()"
+        ></textarea>
 
-<button onclick="setMode('rewrite')" id="btn-rewrite">
-3. AI Rewriter
-</button>
+        <div class="counter">
+          <span id="wordCount">0 words</span>
+          <span id="charCount">0 characters</span>
+        </div>
 
-<button onclick="setMode('tone')" id="btn-tone">
-4. Tone Changer
-</button>
+        <div id="extraControls"></div>
 
-<button onclick="setMode('summary')" id="btn-summary">
-5. Summarizer
-</button>
+        <div class="controls">
 
-<button onclick="setMode('letter')" id="btn-letter">
-6. Letter Writer
-</button>
+          <button
+            class="process-btn"
+            id="processBtn"
+            onclick="processText()"
+          >
+            Check Grammar
+          </button>
 
-<button onclick="setMode('application')" id="btn-application">
-7. Application
-</button>
+        </div>
 
-<button onclick="setMode('enbn')" id="btn-enbn">
-8. EN → BEN
-</button>
+        <div class="status" id="status"></div>
 
-<button onclick="setMode('resume')" id="btn-resume">
-9. Resume
-</button>
+      </section>
 
-<button onclick="setMode('story')" id="btn-story">
-10. Story / Essay
-</button>
 
-<button onclick="setMode('vocab')" id="btn-vocab">
-11. Vocab
-</button>
+      <!-- OUTPUT PANEL -->
+      <section class="panel glass">
 
-<button onclick="setMode('enhi')" id="btn-enhi">
-12. EN → HI
-</button>
+        <h2>Result</h2>
 
-</div>
+        <p class="description">
+          Your processed result will appear here.
+        </p>
 
+        <div class="output" id="output">
+          Your result will appear here...
+        </div>
 
-<!-- TONE OPTIONS -->
+        <div class="controls">
 
-<div id="toneOptions" class="option-area">
+          <button
+            class="copy-btn"
+            onclick="copyOutput()"
+          >
+            Copy Result
+          </button>
 
-<div class="inline-options">
+        </div>
 
-<button onclick="setTone('formal')" class="tone-btn active" id="formalBtn">
-Formal
-</button>
+      </section>
 
-<button onclick="setTone('casual')" class="tone-btn" id="casualBtn">
-Casual
-</button>
+    </div>
 
-<button onclick="setTone('professional')" class="tone-btn" id="profBtn">
-Professional
-</button>
+    <div class="footer">
+      LexiCorrect Pro • Hackathon Project
+    </div>
 
-</div>
-
-</div>
-
-
-<!-- LETTER OPTIONS -->
-
-<div id="letterOptions" class="option-area">
-
-<label>Letter Type</label>
-
-<select id="letterType">
-<option value="hod">To HOD</option>
-<option value="principal">To Principal</option>
-<option value="headmaster">To Headmaster / Headmistress</option>
-<option value="teacher">To Teacher</option>
-<option value="editor">To Editor</option>
-<option value="manager">To Manager</option>
-</select>
-
-</div>
-
-
-<!-- APPLICATION OPTIONS -->
-
-<div id="applicationOptions" class="option-area">
-
-<div class="inline-options">
-
-<div>
-<label>Institution</label>
-<select id="institutionType">
-<option value="auto">Auto Detect</option>
-<option value="school">School</option>
-<option value="college">College</option>
-</select>
-</div>
-
-<div>
-<label>Application Type</label>
-<select id="applicationType">
-<option value="leave">Leave Application</option>
-<option value="fee">Fee Concession</option>
-<option value="certificate">Certificate Request</option>
-<option value="transfer">Transfer Certificate</option>
-<option value="general">General Application</option>
-</select>
-</div>
-
-</div>
-
-</div>
-
-
-<!-- RESUME OPTIONS -->
-
-<div id="resumeOptions" class="option-area">
-
-<label>
-Enter your resume information
-</label>
-
-<div class="inline-options">
-
-<input id="resumeName" placeholder="Full Name">
-<input id="resumeEmail" placeholder="Email">
-<input id="resumePhone" placeholder="Phone">
-<input id="resumeEducation" placeholder="Education">
-<input id="resumeSkills" placeholder="Skills">
-<input id="resumeExperience" placeholder="Experience">
-<input id="resumeAddress" placeholder="Address">
-
-</div>
-
-</div>
-
-
-<!-- STORY OPTIONS -->
-
-<div id="storyOptions" class="option-area">
-
-<div class="inline-options">
-
-<div>
-<label>Content Type</label>
-
-<select id="storyType">
-<option value="story">Short Story</option>
-<option value="essay">Essay</option>
-<option value="paragraph">Paragraph</option>
-<option value="speech">Speech</option>
-</select>
-</div>
-
-<div>
-<label>Length</label>
-
-<select id="storyLength">
-<option value="short">Short</option>
-<option value="medium">Medium</option>
-<option value="long">Long</option>
-</select>
-</div>
-
-</div>
-
-</div>
-
-
-<!-- VOCAB OPTIONS -->
-
-<div id="vocabOptions" class="option-area">
-
-<label>
-Enter one English word
-</label>
-
-<input
-id="vocabWord"
-placeholder="Example: Beautiful"
-/>
-
-</div>
-
-
-<button class="generate-btn" onclick="processText()">
-✨ Process Text
-</button>
-
-
-<!-- OUTPUT -->
-
-<div class="output" id="output">
-
-<div style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:10px;
-gap:10px;
-">
-
-<h3 id="outputTitle">Result</h3>
-
-<button
-onclick="copyText()"
-class="small-btn"
->
-📋 Copy
-</button>
-
-</div>
-
-<div class="result" id="result"></div>
-
-<div id="extraInfo"></div>
-
-</div>
-
-<div class="footer-note">
-LexiCorrect Pro • Writing Assistant
-</div>
-
-</div>
-</div>
+  </div>
 
 
 <script>
 
-let mode="grammar";
-let selectedTone="formal";
-let selectedLang="en-US";
+  /* =========================================================
+     GLOBAL STATE
+  ========================================================= */
+
+  let currentMode = "grammar";
+  let currentTone = "formal";
+
+
+  /* =========================================================
+     FEATURE INFORMATION
+  ========================================================= */
 
-const topic=document.getElementById("topic");
-const result=document.getElementById("result");
-const output=document.getElementById("output");
-const extraInfo=document.getElementById("extraInfo");
+  const modes = {
+
+    grammar: {
+      title: "Grammar Check",
+      description:
+        "Find common grammar and writing errors using LanguageTool.",
+      button:
+        "Check Grammar",
+      placeholder:
+        "Example: She go to school every day."
+    },
 
-document.getElementById("languageSelect")
-.addEventListener("change",e=>{
-selectedLang=e.target.value;
-});
+    rewrite: {
+      title: "Smart Rewriter",
+      description:
+        "Rewrite text using lightweight JavaScript-based language rules.",
+      button:
+        "Rewrite Text",
+      placeholder:
+        "Example: This project is very good and very important."
+    },
+
+    tone: {
+      title: "Tone Changer",
+      description:
+        "Change the writing style into Formal, Casual, or Professional tone.",
+      button:
+        "Change Tone",
+      placeholder:
+        "Example: Hey, I need your help with this thing."
+    },
+
+    summary: {
+      title: "Summarizer",
+      description:
+        "Create an extractive summary by scoring important sentences.",
+      button:
+        "Summarize",
+      placeholder:
+        "Enter a paragraph or multiple sentences to summarize."
+    },
 
+    vocabulary: {
+      title: "Vocabulary",
+      description:
+        "Look up the meaning and word information using a dictionary API.",
+      button:
+        "Check Word",
+      placeholder:
+        "Example: resilient"
+    }
 
-/* =========================
-   PDF READER
-========================= */
+  };
 
-document.getElementById("pdfUpload")
-.addEventListener("change",async e=>{
 
-const file=e.target.files[0];
+  /* =========================================================
+     CHANGE FEATURE
+  ========================================================= */
 
-if(!file)return;
+  function setMode(mode, buttonElement) {
 
-try{
+    currentMode = mode;
 
-const pdf=await pdfjsLib
-.getDocument(URL.createObjectURL(file))
-.promise;
+    const info = modes[mode];
 
-let txt="";
+    document.getElementById("modeTitle").textContent = info.title;
 
-for(let i=1;i<=pdf.numPages;i++){
+    document.getElementById("modeDescription").textContent =
+      info.description;
 
-const p=await pdf.getPage(i);
+    document.getElementById("processBtn").textContent =
+      info.button;
 
-const c=await p.getTextContent();
+    document.getElementById("inputText").placeholder =
+      info.placeholder;
 
-txt+=c.items.map(x=>x.str).join(" ")+"\n";
+    document.getElementById("output").textContent =
+      "Your result will appear here...";
 
-}
+    document.getElementById("status").textContent = "";
 
-topic.value=txt.substring(0,8000);
+    document.querySelectorAll(".feature-btn").forEach(btn => {
+      btn.classList.remove("active");
+    });
 
-}catch(err){
+    if (buttonElement) {
+      buttonElement.classList.add("active");
+    }
 
-alert("Could not read this PDF.");
+    createExtraControls();
+  }
 
-}
 
-});
+  /* =========================================================
+     EXTRA CONTROLS
+  ========================================================= */
 
+  function createExtraControls() {
 
-/* =========================
-   VOICE
-========================= */
+    const container =
+      document.getElementById("extraControls");
 
-function startVoice(){
+    container.innerHTML = "";
 
-const SR=
-window.SpeechRecognition||
-window.webkitSpeechRecognition;
+    if (currentMode === "tone") {
 
-if(!SR){
+      container.innerHTML = `
+        <div class="tone-buttons">
 
-alert("Speech recognition is not supported. Please use Google Chrome.");
+          <button
+            class="tone-btn active"
+            onclick="selectTone('formal', this)"
+          >
+            Formal
+          </button>
 
-return;
-}
+          <button
+            class="tone-btn"
+            onclick="selectTone('casual', this)"
+          >
+            Casual
+          </button>
 
-const r=new SR();
+          <button
+            class="tone-btn"
+            onclick="selectTone('professional', this)"
+          >
+            Professional
+          </button>
 
-r.lang=selectedLang;
+        </div>
+      `;
+    }
+  }
 
-r.onstart=()=>{
-document.getElementById("voiceBtn").innerText="🔴 Listening";
-};
 
-r.onend=()=>{
-document.getElementById("voiceBtn").innerText="🎤 Speak";
-};
+  function selectTone(tone, buttonElement) {
 
-r.onerror=()=>{
-document.getElementById("voiceBtn").innerText="🎤 Speak";
-};
+    currentTone = tone;
 
-r.onresult=e=>{
+    document.querySelectorAll(".tone-btn").forEach(btn => {
+      btn.classList.remove("active");
+    });
 
-topic.value+=" "+e.results[0][0].transcript;
+    buttonElement.classList.add("active");
+  }
 
-};
 
-r.start();
+  /* =========================================================
+     COUNTER
+  ========================================================= */
 
-}
+  function updateCounter() {
 
+    const text =
+      document.getElementById("inputText").value.trim();
 
-/* =========================
-   MODE
-========================= */
+    const words =
+      text ? text.split(/\s+/).length : 0;
 
-function setMode(m){
+    const characters =
+      document.getElementById("inputText").value.length;
 
-mode=m;
+    document.getElementById("wordCount").textContent =
+      `${words} words`;
 
-document
-.querySelectorAll(".feature-btns button")
-.forEach(b=>b.classList.remove("active"));
+    document.getElementById("charCount").textContent =
+      `${characters} characters`;
+  }
 
-document
-.getElementById("btn-"+m)
-.classList.add("active");
 
+  /* =========================================================
+     MAIN PROCESS FUNCTION
+  ========================================================= */
 
-/* hide every option */
+  async function processText() {
 
-document
-.querySelectorAll(".option-area")
-.forEach(x=>x.style.display="none");
+    const input =
+      document.getElementById("inputText").value.trim();
 
+    const output =
+      document.getElementById("output");
 
-/* show required option */
+    const status =
+      document.getElementById("status");
 
-if(m==="tone")
-document.getElementById("toneOptions").style.display="block";
+    const button =
+      document.getElementById("processBtn");
 
-if(m==="letter")
-document.getElementById("letterOptions").style.display="block";
 
-if(m==="application")
-document.getElementById("applicationOptions").style.display="block";
+    if (!input) {
 
-if(m==="resume")
-document.getElementById("resumeOptions").style.display="block";
+      output.textContent =
+        "Please enter some text first.";
 
-if(m==="story")
-document.getElementById("storyOptions").style.display="block";
+      status.textContent =
+        "No input provided.";
 
-if(m==="vocab")
-document.getElementById("vocabOptions").style.display="block";
+      return;
+    }
 
 
-const titles={
-grammar:"GRAMMAR CHECK",
-plagiarism:"PLAGIARISM CHECK",
-rewrite:"AI REWRITER",
-tone:"TONE CHANGER",
-summary:"SUMMARIZER",
-letter:"LETTER WRITER",
-application:"APPLICATION",
-enbn:"ENGLISH → BENGALI",
-resume:"RESUME",
-story:"STORY / ESSAY",
-vocab:"VOCABULARY",
-enhi:"ENGLISH → HINDI"
-};
+    button.disabled = true;
 
-document.getElementById("outputTitle").innerText=titles[m]||"RESULT";
+    button.textContent = "Processing...";
 
-}
+    status.textContent =
+      "Processing your request...";
 
 
-/* =========================
-   TONE
-========================= */
+    try {
 
-function setTone(t){
+      if (currentMode === "grammar") {
 
-selectedTone=t;
+        await grammarCheck(input);
 
-document
-.querySelectorAll(".tone-btn")
-.forEach(b=>b.classList.remove("active"));
+      }
 
-if(t==="formal")
-document.getElementById("formalBtn").classList.add("active");
+      else if (currentMode === "rewrite") {
 
-if(t==="casual")
-document.getElementById("casualBtn").classList.add("active");
+        const result =
+          smartRewrite(input);
 
-if(t==="professional")
-document.getElementById("profBtn").classList.add("active");
+        output.textContent =
+          result;
 
-}
+        status.textContent =
+          "Text rewritten successfully.";
 
+      }
 
-/* =========================
-   MAIN PROCESS
-========================= */
+      else if (currentMode === "tone") {
 
-async function processText(){
+        const result =
+          changeTone(input, currentTone);
 
-let text=topic.value.trim();
+        output.textContent =
+          result;
 
+        status.textContent =
+          "Tone changed successfully.";
 
-if(mode==="vocab"){
+      }
 
-text=document.getElementById("vocabWord").value.trim();
+      else if (currentMode === "summary") {
 
-}
+        const result =
+          summarizeText(input);
 
-if(!text){
+        output.textContent =
+          result;
 
-alert("Enter text first.");
+        status.textContent =
+          "Summary generated successfully.";
 
-return;
+      }
 
-}
+      else if (currentMode === "vocabulary") {
 
-output.style.display="block";
+        await vocabularyLookup(input);
 
-result.innerText="Processing...";
+      }
 
-extraInfo.innerText="";
+    }
 
+    catch (error) {
 
-/* =========================
-   1. GRAMMAR
-========================= */
+      console.error(error);
 
-if(mode==="grammar"){
+      output.textContent =
+        "Something went wrong. Please try again.";
 
-try{
+      status.textContent =
+        "An error occurred while processing.";
 
-const form=new FormData();
+    }
 
-form.append("text",text);
+    finally {
 
-form.append(
-"language",
-selectedLang==="bn-IN"
-?"bn":
-selectedLang==="hi-IN"
-?"hi":
-"en-US"
-);
+      button.disabled = false;
 
-const resp=await fetch(
-"https://api.languagetool.org/v2/check",
-{
-method:"POST",
-body:form
-}
-);
+      button.textContent =
+        modes[currentMode].button;
 
-const data=await resp.json();
+    }
+  }
 
-if(data.matches.length===0){
 
-result.innerText=
-"✅ No grammar mistakes!\n\n"+
-"Original:\n"+text;
+  /* =========================================================
+     1. GRAMMAR CHECK
+  ========================================================= */
 
-extraInfo.innerText=
-`Checked: ${text.split(/\s+/).length} words`;
+  async function grammarCheck(text) {
 
-}else{
+    const output =
+      document.getElementById("output");
 
-let fixed=text;
+    const status =
+      document.getElementById("status");
 
-let issues="";
 
-data.matches.slice(0,8).forEach(m=>{
+    status.textContent =
+      "Sending text to LanguageTool...";
 
-issues+=
-`• ${m.message} → ${
-m.replacements[0]?.value||""
-}\n`;
 
-if(m.replacements[0]){
+    const params =
+      new URLSearchParams();
 
-fixed=fixed.replace(
-m.context.text.substring(
-m.context.offset,
-m.context.offset+m.context.length
-),
-m.replacements[0].value
-);
+    params.append("text", text);
 
-}
+    params.append("language", "en-US");
 
-});
 
-result.innerText=
-`ISSUES FOUND:\n${issues}\n`+
-`SUGGESTED FIX:\n${fixed}`;
+    const response = await fetch(
+      "https://api.languagetool.org/v2/check",
+      {
+        method: "POST",
 
-extraInfo.innerText=
-`Found ${data.matches.length} issue(s)`;
+        headers: {
+          "Content-Type":
+            "application/x-www-form-urlencoded"
+        },
 
-}
+        body: params.toString()
+      }
+    );
 
-}catch(e){
 
-let fixed=text
-.replace(/\bI has\b/gi,"I have")
-.replace(/\bI is\b/gi,"I am")
-.replace(/\bI are\b/gi,"I am")
-.replace(/\bhe have\b/gi,"he has")
-.replace(/\bshe have\b/gi,"she has")
-.replace(/\bthey was\b/gi,"they were")
-.replace(/\bwe was\b/gi,"we were")
-.replace(/\bdid not went\b/gi,"did not go");
+    if (!response.ok) {
+      throw new Error(
+        "LanguageTool API request failed."
+      );
+    }
 
-result.innerText=
-`Grammar Check (Offline Mode)\n\n`+
-`Original:\n${text}\n\n`+
-`Corrected:\n${fixed}`;
 
-}
+    const data =
+      await response.json();
 
-}
 
+    const matches =
+      data.matches || [];
 
-/* =========================
-   2. PLAGIARISM
-========================= */
 
-else if(mode==="plagiarism"){
+    if (matches.length === 0) {
 
-const score=
-Math.floor(Math.random()*10)+5;
+      output.innerHTML = `
+        <div class="result-card">
+          <strong>No major issues found.</strong><br>
+          Your text looks good according to the grammar service.
+        </div>
+      `;
 
-const originality=100-score;
+      status.textContent =
+        "Grammar check completed.";
 
-result.innerText=
-`PLAGIARISM REPORT\n\n`+
-`Originality Score: ${originality}% ✅\n`+
-`Estimated Plagiarism: ${score}%\n\n`+
-`Status: ${
-score<20
-?"SAFE - Your content appears highly original."
-:"NEEDS REVIEW"
-}\n\n`+
-`Words Checked: ${text.split(/\s+/).length}`;
+      return;
+    }
 
-extraInfo.innerText=
-"Demo mode: real plagiarism detection requires a plagiarism API/backend.";
 
-}
+    /*
+      We sort matches from the end of the sentence
+      to the beginning before applying replacements.
 
+      This prevents character positions from shifting.
+    */
 
-/* =========================
-   3. REWRITER
-========================= */
+    const sortedMatches =
+      [...matches].sort(
+        (a, b) => b.offset - a.offset
+      );
 
-else if(mode==="rewrite"){
 
-let v1=text
-.replace(/\bvery good\b/gi,"excellent")
-.replace(/\bvery bad\b/gi,"extremely poor")
-.replace(/\bI want\b/gi,"I would like")
-.replace(/\bimportant\b/gi,"crucial")
-.replace(/\bhelp\b/gi,"assist");
+    let correctedText = text;
 
-let v2=text
-.replace(/\bvery good\b/gi,"highly effective")
-.replace(/\bI want\b/gi,"I wish to")
-.replace(/\bhelp\b/gi,"support")
-.replace(/\bimportant\b/gi,"significant");
 
-let v3=text
-.replace(/\bvery good\b/gi,"outstanding")
-.replace(/\bI want\b/gi,"I am interested in")
-.replace(/\bhelp\b/gi,"provide assistance")
-.replace(/\bimportant\b/gi,"essential");
+    sortedMatches.forEach(match => {
 
-result.innerText=
-`VERSION 1 — NATURAL\n\n${v1}\n\n`+
-`VERSION 2 — PROFESSIONAL\n\n${v2}\n\n`+
-`VERSION 3 — ADVANCED\n\n${v3}`;
+      if (
+        match.replacements &&
+        match.replacements.length > 0
+      ) {
 
-extraInfo.innerText="3 rewritten versions generated.";
+        const replacement =
+          match.replacements[0].value;
 
-}
+        correctedText =
+          correctedText.slice(
+            0,
+            match.offset
+          ) +
 
+          replacement +
 
-/* =========================
-   4. TONE
-========================= */
+          correctedText.slice(
+            match.offset + match.length
+          );
+      }
 
-else if(mode==="tone"){
+    });
 
-let outText="";
 
-if(selectedTone==="formal"){
+    let html = `
+      <div class="result-card">
+        <strong>Corrected Text:</strong><br><br>
+        ${escapeHTML(correctedText)}
+      </div>
+    `;
 
-outText=
-`FORMAL VERSION\n\n`+
-`Dear Sir/Madam,\n\n`+
-`${text}\n\n`+
-`I would be grateful for your kind consideration of this matter.\n\n`+
-`Yours faithfully,\n`+
-`[Your Name]`;
 
-}
+    html += `
+      <div class="result-card">
+        <strong>Suggestions:</strong><br><br>
+    `;
 
-else if(selectedTone==="casual"){
 
-outText=
-`CASUAL VERSION\n\n`+
-`Hey!\n\n${text}\n\n`+
-`Thanks a lot! Let me know 😊\n\n`+
-`Cheers!\n[Your Name]`;
+    matches.forEach((match, index) => {
 
-}
+      const suggestion =
+        match.replacements &&
+        match.replacements.length
+          ? match.replacements[0].value
+          : "No replacement available";
 
-else{
 
-outText=
-`PROFESSIONAL VERSION\n\n`+
-`${text}\n\n`+
-`This matter demonstrates a proactive and constructive approach. `+
-`I look forward to your response and further discussion.\n\n`+
-`Best regards,\n[Your Name]`;
+      html += `
+        ${index + 1}. ${escapeHTML(
+          match.message
+        )}<br>
+        <small>
+          Suggested: ${escapeHTML(suggestion)}
+        </small>
+        <br><br>
+      `;
 
-}
+    });
 
-result.innerText=outText;
 
-}
+    html += "</div>";
 
 
-/* =========================
-   5. SUMMARY
-========================= */
+    output.innerHTML = html;
 
-else if(mode==="summary"){
+    status.textContent =
+      `${matches.length} possible issue(s) found.`;
+  }
 
-const sentences=text
-.split(/[.!?]+/)
-.filter(s=>s.trim().length>10);
 
-const keep=Math.max(
-1,
-Math.ceil(sentences.length*.4)
-);
+  /* =========================================================
+     2. SMART REWRITER
+  ========================================================= */
 
-const summary=
-sentences
-.slice(0,keep)
-.map(s=>s.trim())
-.join(". ")+
-".";
+  function smartRewrite(text) {
 
-const originalWords=text.split(/\s+/).length;
+    let result =
+      text;
 
-const summaryWords=
-summary.split(/\s+/).length;
 
-const reduction=
-Math.max(
-0,
-Math.round(
-(1-summaryWords/originalWords)*100
-)
-);
+    const replacements = [
 
-result.innerText=
-`SHORT SUMMARY\n\n${summary}\n\n`+
-`Original: ${originalWords} words\n`+
-`Summary: ${summaryWords} words\n`+
-`Reduced by: ${reduction}%`;
+      [/\bvery good\b/gi, "excellent"],
 
-}
+      [/\bvery bad\b/gi, "poor"],
 
+      [/\bvery important\b/gi, "essential"],
 
-/* =========================
-   6. LETTER WRITER
-========================= */
+      [/\ba lot of\b/gi, "many"],
 
-else if(mode==="letter"){
+      [/\bI want to\b/gi, "I would like to"],
 
-const type=
-document.getElementById("letterType").value;
+      [/\bI need to\b/gi, "I would like to"],
 
-let receiver="The Head of the Department";
+      [/\bhelp\b/gi, "assist"],
 
-if(type==="principal")
-receiver="The Principal";
+      [/\buse\b/gi, "utilize"],
 
-if(type==="headmaster")
-receiver="The Headmaster / Headmistress";
+      [/\bstart\b/gi, "begin"],
 
-if(type==="teacher")
-receiver="The Class Teacher";
+      [/\bshow\b/gi, "demonstrate"]
 
-if(type==="editor")
-receiver="The Editor";
+    ];
 
-if(type==="manager")
-receiver="The Manager";
 
-result.innerText=
-`To\n`+
-`${receiver}\n`+
-`[Institution / Organization Name]\n`+
-`[Address]\n\n`+
-`Date: [DD/MM/YYYY]\n\n`+
-`Subject: ${makeSubject(text)}\n\n`+
-`Respected Sir/Madam,\n\n`+
-`${text}\n\n`+
-`I therefore request you to kindly consider my request and take the necessary action at your earliest convenience.\n\n`+
-`Thanking you.\n\n`+
-`Yours faithfully,\n`+
-`[Your Name]\n`+
-`[Class / Department]\n`+
-`[Roll No. / ID]`;
+    replacements.forEach(
+      ([pattern, replacement]) => {
 
-extraInfo.innerText=
-"Complete formal letter format generated.";
+        result =
+          result.replace(
+            pattern,
+            replacement
+          );
 
-}
+      }
+    );
 
 
-/* =========================
-   7. APPLICATION
-========================= */
+    /*
+      Remove repeated spaces.
+    */
 
-else if(mode==="application"){
+    result =
+      result.replace(
+        /\s+/g,
+        " "
+      ).trim();
 
-let institution=
-document.getElementById("institutionType").value;
 
-let appType=
-document.getElementById("applicationType").value;
+    return result;
+  }
 
-if(institution==="auto"){
 
-const lower=text.toLowerCase();
+  /* =========================================================
+     3. TONE CHANGER
+  ========================================================= */
 
-if(
-lower.includes("college")||
-lower.includes("university")||
-lower.includes("semester")||
-lower.includes("department")
-){
+  function changeTone(text, tone) {
 
-institution="college";
+    let result =
+      text;
 
-}else{
 
-institution="school";
+    if (tone === "formal") {
 
-}
+      const replacements = [
 
-}
+        [/\bhey\b/gi, "Hello"],
 
-let authority=
-institution==="college"
-?"The Principal / HOD"
-:"The Headmaster / Headmistress";
+        [/\bhi\b/gi, "Hello"],
 
-let subject="Application regarding the matter mentioned below";
+        [/\bthanks\b/gi, "Thank you"],
 
-if(appType==="leave")
-subject="Application for Leave";
+        [/\bthanks a lot\b/gi, "Thank you very much"],
 
-if(appType==="fee")
-subject="Application for Fee Concession";
+        [/\bI want\b/gi, "I would like"],
 
-if(appType==="certificate")
-subject="Application for Certificate";
+        [/\bcan you\b/gi, "Could you"],
 
-if(appType==="transfer")
-subject="Application for Transfer Certificate";
+        [/\bhelp me\b/gi, "assist me"],
 
-result.innerText=
-`To\n`+
-`${authority}\n`+
-`[${institution==="college"?"College":"School"} Name]\n`+
-`[Address]\n\n`+
-`Date: [DD/MM/YYYY]\n\n`+
-`Subject: ${subject}\n\n`+
-`Respected Sir/Madam,\n\n`+
-`I am a student of your ${institution}. `+
-`${text}\n\n`+
-`I kindly request you to consider my application and grant my request.\n\n`+
-`I shall be highly obliged for your kind consideration.\n\n`+
-`Thanking you.\n\n`+
-`Yours obediently,\n`+
-`[Your Name]\n`+
-`Class: [Class]\n`+
-`Roll No.: [Roll]\n`+
-`Date: [Date]`;
+        [/\bneed\b/gi, "require"]
 
-extraInfo.innerText=
-`Detected institution: ${
-institution==="college"?"College":"School"
-}`;
+      ];
 
-}
 
+      replacements.forEach(
+        ([pattern, replacement]) => {
 
-/* =========================
-   8. ENGLISH → BENGALI
-========================= */
+          result =
+            result.replace(
+              pattern,
+              replacement
+            );
 
-else if(mode==="enbn"){
+        }
+      );
 
-await translateText(
-text,
-"en",
-"bn"
-);
+    }
 
-}
 
+    else if (tone === "casual") {
 
-/* =========================
-   9. RESUME
-========================= */
+      const replacements = [
 
-else if(mode==="resume"){
+        [/\bHello\b/g, "Hey"],
 
-const name=
-document.getElementById("resumeName").value||"[FULL NAME]";
+        [/\bThank you\b/gi, "Thanks"],
 
-const email=
-document.getElementById("resumeEmail").value||"[EMAIL]";
+        [/\bI would like\b/gi, "I want"],
 
-const phone=
-document.getElementById("resumePhone").value||"[PHONE]";
+        [/\bCould you\b/gi, "Can you"],
 
-const education=
-document.getElementById("resumeEducation").value||
-"[Your Educational Qualification]";
+        [/\bassistance\b/gi, "help"]
 
-const skills=
-document.getElementById("resumeSkills").value||
-"[Communication, MS Office, Teamwork]";
+      ];
 
-const experience=
-document.getElementById("resumeExperience").value||
-"[Fresher / Your Work Experience]";
 
-const address=
-document.getElementById("resumeAddress").value||
-"[Address]";
+      replacements.forEach(
+        ([pattern, replacement]) => {
 
-result.innerText=
-`${name.toUpperCase()}\n`+
-`${address}\n`+
-`Phone: ${phone}\n`+
-`Email: ${email}\n\n`+
+          result =
+            result.replace(
+              pattern,
+              replacement
+            );
 
-`CAREER OBJECTIVE\n`+
-`--------------------------------\n`+
-`${text}\n\n`+
+        }
+      );
 
-`EDUCATION\n`+
-`--------------------------------\n`+
-`${education}\n\n`+
+    }
 
-`SKILLS\n`+
-`--------------------------------\n`+
-`${formatList(skills)}\n\n`+
 
-`EXPERIENCE\n`+
-`--------------------------------\n`+
-`${experience}\n\n`+
+    else if (tone === "professional") {
 
-`PERSONAL DETAILS\n`+
-`--------------------------------\n`+
-`Name: ${name}\n`+
-`Email: ${email}\n`+
-`Phone: ${phone}\n\n`+
+      const replacements = [
 
-`DECLARATION\n`+
-`--------------------------------\n`+
-`I hereby declare that the information provided above is true and correct to the best of my knowledge.\n\n`+
-`Date: [Date]\n`+
-`Place: [Place]\n\n`+
-`Signature\n`+
-`${name}`;
+        [/\bhey\b/gi, "Hello"],
 
-extraInfo.innerText=
-"Resume draft generated from your information.";
+        [/\bhi\b/gi, "Hello"],
 
-}
+        [/\bthanks\b/gi, "Thank you"],
 
+        [/\bI want\b/gi, "I would like"],
 
-/* =========================
-   10. STORY / ESSAY
-========================= */
+        [/\bcan you\b/gi, "Could you please"],
 
-else if(mode==="story"){
+        [/\bhelp me\b/gi, "assist me"],
 
-const type=
-document.getElementById("storyType").value;
+        [/\bthing\b/gi, "matter"]
 
-const length=
-document.getElementById("storyLength").value;
+      ];
 
-let paragraphs=3;
 
-if(length==="medium")paragraphs=5;
-if(length==="long")paragraphs=8;
+      replacements.forEach(
+        ([pattern, replacement]) => {
 
-let title=
-text.length<80
-?text
-:"A Meaningful Journey";
+          result =
+            result.replace(
+              pattern,
+              replacement
+            );
 
-if(type==="essay"){
+        }
+      );
 
-result.innerText=
-`${title}\n\n`+
-generateEssay(text,paragraphs);
+    }
 
-}
 
-else if(type==="paragraph"){
+    return result;
+  }
 
-result.innerText=
-`${title}\n\n`+
-generateParagraph(text,paragraphs);
 
-}
+  /* =========================================================
+     4. EXTRACTIVE SUMMARIZER
+  ========================================================= */
 
-else if(type==="speech"){
+  function summarizeText(text) {
 
-result.innerText=
-`SPEECH ON: ${title}\n\n`+
-`Respected Principal, teachers and my dear friends,\n\n`+
-generateSpeech(text,paragraphs)+
-`\n\nThank you.`;
+    const sentences =
+      text
+        .match(/[^.!?]+[.!?]+|[^.!?]+$/g);
 
-}
 
-else{
+    if (!sentences || sentences.length <= 2) {
 
-result.innerText=
-`${title}\n\n`+
-generateStory(text,paragraphs);
+      return text;
+    }
 
-}
 
-extraInfo.innerText=
-`${type.toUpperCase()} generated in ${length} format.`;
+    const stopWords = new Set([
 
-}
+      "the", "is", "a", "an", "and",
+      "or", "of", "to", "in", "on",
+      "for", "with", "that", "this",
+      "it", "as", "are", "was", "were",
+      "be", "by", "from", "at", "which",
+      "has", "have", "had", "but", "not",
+      "they", "their", "them", "he",
+      "she", "his", "her", "we", "our",
+      "you", "your", "i"
 
+    ]);
 
-/* =========================
-   11. VOCAB
-========================= */
 
-else if(mode==="vocab"){
+    const wordFrequency = {};
 
-await getVocabulary(text);
 
-}
+    /*
+      Step 1:
+      Count important words.
+    */
 
+    sentences.forEach(sentence => {
 
-/* =========================
-   12. ENGLISH → HINDI
-========================= */
+      const words =
+        sentence
+          .toLowerCase()
+          .match(/[a-z]+/g) || [];
 
-else if(mode==="enhi"){
 
-await translateText(
-text,
-"en",
-"hi"
-);
+      words.forEach(word => {
 
-}
+        if (
+          word.length > 2 &&
+          !stopWords.has(word)
+        ) {
 
-}
+          wordFrequency[word] =
+            (wordFrequency[word] || 0) + 1;
 
+        }
 
-/* =========================
-   LETTER SUBJECT
-========================= */
+      });
 
-function makeSubject(text){
+    });
 
-const t=text.toLowerCase();
 
-if(t.includes("leave"))
-return "Request for Leave";
+    /*
+      Step 2:
+      Score every sentence.
+    */
 
-if(t.includes("admission"))
-return "Regarding Admission";
+    const scored =
+      sentences.map(
+        (sentence, index) => {
 
-if(t.includes("fee"))
-return "Regarding Fee";
+          const words =
+            sentence
+              .toLowerCase()
+              .match(/[a-z]+/g) || [];
 
-if(t.includes("certificate"))
-return "Request for Certificate";
 
-if(t.includes("permission"))
-return "Request for Permission";
+          let score = 0;
 
-if(t.includes("complaint"))
-return "Regarding a Complaint";
 
-return "Regarding the Matter Mentioned Below";
+          words.forEach(word => {
 
-}
+            if (wordFrequency[word]) {
 
+              score +=
+                wordFrequency[word];
 
-/* =========================
-   TRANSLATION
-   MyMemory API
-========================= */
+            }
 
-async function translateText(text,from,to){
+          });
 
-try{
 
-result.innerText="Translating...";
+          /*
+            Slight bonus for earlier sentences.
+            This helps preserve context.
+          */
 
-const url=
-"https://api.mymemory.translated.net/get?"+
-"q="+encodeURIComponent(text)+
-"&langpair="+from+"|"+to;
+          score +=
+            Math.max(
+              0,
+              3 - index * 0.2
+            );
 
-const response=await fetch(url);
 
-const data=await response.json();
+          return {
+            sentence,
+            score,
+            index
+          };
 
-if(
-data.responseStatus===200 &&
-data.responseData &&
-data.responseData.translatedText
-){
+        }
+      );
 
-result.innerText=
-`TRANSLATED TEXT\n\n`+
-data.responseData.translatedText;
 
-extraInfo.innerText=
-`Translation: English → ${
-to==="bn"?"Bengali":"Hindi"
-}`;
+    /*
+      Step 3:
+      Select roughly 40% of sentences.
+    */
 
-}else{
+    const numberToSelect =
+      Math.max(
+        1,
+        Math.ceil(
+          sentences.length * 0.4
+        )
+      );
 
-throw new Error("Translation failed");
 
-}
+    const selected =
+      scored
+        .sort(
+          (a, b) =>
+            b.score - a.score
+        )
+        .slice(
+          0,
+          numberToSelect
+        );
 
-}catch(e){
 
-result.innerText=
-"Translation service is temporarily unavailable.\n\n"+
-"Please check your internet connection and try again.";
+    /*
+      Step 4:
+      Restore original order.
+    */
 
-extraInfo.innerText=
-"Online translation API could not be reached.";
+    selected.sort(
+      (a, b) =>
+        a.index - b.index
+    );
 
-}
 
-}
+    return selected
+      .map(item => item.sentence.trim())
+      .join(" ");
+  }
 
 
-/* =========================
-   VOCABULARY API
-========================= */
+  /* =========================================================
+     5. VOCABULARY
+  ========================================================= */
 
-async function getVocabulary(word){
+  async function vocabularyLookup(word) {
 
-try{
+    const output =
+      document.getElementById("output");
 
-result.innerText="Finding meaning...";
+    const status =
+      document.getElementById("status");
 
-const response=
-await fetch(
-"https://api.dictionaryapi.dev/api/v2/entries/en/"+
-encodeURIComponent(word)
-);
 
-if(!response.ok)
-throw new Error("Word not found");
+    /*
+      Vocabulary feature expects one word.
+    */
 
-const data=await response.json();
+    const cleanWord =
+      word
+        .trim()
+        .split(/\s+/)[0]
+        .toLowerCase();
 
-const entry=data[0];
 
-let output=
-`WORD: ${entry.word}\n\n`;
+    status.textContent =
+      "Looking up the word...";
 
-if(entry.phonetic)
-output+=
-`Pronunciation: ${entry.phonetic}\n\n`;
 
-const meanings=entry.meanings||[];
+    const response =
+      await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(cleanWord)}`
+      );
 
-meanings.slice(0,4).forEach((m,i)=>{
 
-output+=
-`${i+1}. ${m.partOfSpeech||"Meaning"}\n`;
+    if (!response.ok) {
 
-(m.definitions||[])
-.slice(0,2)
-.forEach(d=>{
+      output.textContent =
+        "Word not found. Please enter a valid English word.";
 
-output+=
-`• Meaning: ${d.definition}\n`;
+      status.textContent =
+        "No dictionary result found.";
 
-if(d.example)
-output+=
-`• Example: ${d.example}\n`;
+      return;
+    }
 
-});
 
-output+="\n";
+    const data =
+      await response.json();
 
-});
 
-result.innerText=output;
+    if (
+      !Array.isArray(data) ||
+      !data[0]
+    ) {
 
-extraInfo.innerText=
-"Meaning fetched from online dictionary.";
+      throw new Error(
+        "Invalid dictionary response."
+      );
 
-}catch(e){
+    }
 
-result.innerText=
-`VOCABULARY\n\n`+
-`Word: ${word}\n\n`+
-`Meaning could not be fetched right now.\n`+
-`Please check the spelling or internet connection.`;
 
-}
+    const entry =
+      data[0];
 
-}
 
+    let html = `
+      <div class="result-card">
+        <strong>Word:</strong>
+        ${escapeHTML(entry.word || cleanWord)}
+      </div>
+    `;
 
-/* =========================
-   RESUME LIST
-========================= */
 
-function formatList(value){
+    if (entry.phonetic) {
 
-return value
-.split(",")
-.map(x=>"• "+x.trim())
-.join("\n");
+      html += `
+        <div class="result-card">
+          <strong>Pronunciation:</strong><br>
+          ${escapeHTML(entry.phonetic)}
+        </div>
+      `;
 
-}
+    }
 
 
-/* =========================
-   STORY GENERATOR
-========================= */
+    const meanings =
+      entry.meanings || [];
 
-function generateStory(topic,paragraphs){
 
-const ideas=[
-`One day, the main character decided to face a difficult situation connected with "${topic}". At first, everything seemed uncertain, but there was a strong desire to find a solution.`,
+    meanings.forEach(
+      (meaning, index) => {
 
-`The journey was not easy. Several problems appeared along the way, and each problem taught an important lesson about patience, courage and determination.`,
+        html += `
+          <div class="result-card">
 
-`After thinking carefully, the character understood that every challenge could become an opportunity to learn something new. Instead of giving up, a positive step was taken.`,
+            <strong>
+              ${index + 1}. ${
+                escapeHTML(
+                  meaning.partOfSpeech ||
+                  "Meaning"
+                )
+              }
+            </strong>
 
-`Slowly, the situation began to change. Friends, teachers or family members offered support, and the character also discovered confidence within themselves.`,
+            <br><br>
+        `;
 
-`Finally, the challenge was overcome. The experience proved that success does not always come immediately, but sincere effort and a positive attitude can make a great difference.`,
 
-`From that day onward, the character looked at life differently. The experience became a memorable lesson that would remain valuable for years to come.`,
+        const definitions =
+          meaning.definitions || [];
 
-`The story also reminded everyone that small decisions can sometimes create major changes in life.`,
 
-`In the end, the real victory was not simply achieving the goal, but becoming stronger and wiser during the journey.`
-];
+        definitions
+          .slice(0, 3)
+          .forEach((definition, i) => {
 
-return ideas.slice(0,paragraphs).join("\n\n");
+            html += `
+              ${i + 1}. ${
+                escapeHTML(
+                  definition.definition
+                )
+              }<br>
+            `;
 
-}
 
+            if (definition.example) {
 
-/* =========================
-   ESSAY GENERATOR
-========================= */
+              html += `
+                <small>
+                  Example:
+                  ${escapeHTML(
+                    definition.example
+                  )}
+                </small><br>
+              `;
 
-function generateEssay(topic,paragraphs){
+            }
 
-const ideas=[
-`"${topic}" is an important topic that deserves careful consideration. It is connected with our daily lives and has an influence on individuals as well as society.`,
 
-`The importance of this subject can be understood from several perspectives. It affects the way people think, behave and make decisions in different situations.`,
+            html += "<br>";
 
-`There are many advantages associated with a positive approach to "${topic}". With awareness, education and responsible action, people can make meaningful improvements.`,
+          });
 
-`However, there can also be challenges. Lack of awareness, careless decisions and limited opportunities may prevent people from achieving the desired results.`,
 
-`Students and young people can play an important role in creating positive change. They can develop good habits, share knowledge and encourage others to act responsibly.`,
+        html += "</div>";
 
-`Society, educational institutions and families also have important responsibilities. Cooperation between different groups can make solutions more practical and effective.`,
+      }
+    );
 
-`Therefore, it is necessary to understand the subject instead of ignoring it. Small positive actions taken consistently can create significant long-term results.`,
 
-`In conclusion, "${topic}" is not merely a theoretical subject. It is something that can influence our present and future, and everyone can contribute through responsible and thoughtful action.`
-];
+    output.innerHTML =
+      html;
 
-return ideas.slice(0,paragraphs).join("\n\n");
 
-}
+    status.textContent =
+      "Vocabulary lookup completed.";
+  }
 
 
-/* =========================
-   PARAGRAPH
-========================= */
+  /* =========================================================
+     COPY RESULT
+  ========================================================= */
 
-function generateParagraph(topic,paragraphs){
+  async function copyOutput() {
 
-return generateEssay(topic,Math.min(paragraphs,4));
+    const output =
+      document.getElementById("output");
 
-}
 
+    const text =
+      output.innerText.trim();
 
-/* =========================
-   SPEECH
-========================= */
 
-function generateSpeech(topic,paragraphs){
+    if (!text) {
 
-const parts=[
-`Today I would like to speak about "${topic}". It is a subject that is important for students and for society as a whole.`,
+      return;
+    }
 
-`We should understand its importance and think about how our actions can create a positive difference. Knowledge becomes valuable when we use it in practical life.`,
 
-`As students, we have the opportunity to learn, improve ourselves and inspire others. Even a small responsible action can become the beginning of a bigger change.`,
+    try {
 
-`Therefore, let us work together with confidence, discipline and a positive attitude. If we remain determined, we can overcome difficulties and build a better future.`,
+      await navigator.clipboard.writeText(
+        text
+      );
 
-`Let us remember that change begins with ourselves. By making better choices today, we can create better opportunities for tomorrow.`,
+      document.getElementById("status").textContent =
+        "Result copied to clipboard.";
 
-`Thank you all for listening to me.`
-];
+    }
 
-return parts
-.slice(0,Math.min(paragraphs,parts.length))
-.join("\n\n");
+    catch (error) {
 
-}
+      /*
+        Fallback for browsers where
+        Clipboard API is unavailable.
+      */
 
+      const textarea =
+        document.createElement("textarea");
 
-/* =========================
-   COPY
-========================= */
+      textarea.value =
+        text;
 
-function copyText(){
+      document.body.appendChild(
+        textarea
+      );
 
-navigator.clipboard
-.writeText(result.innerText)
-.then(()=>alert("Copied!"))
-.catch(()=>{
-alert("Copy failed. Please select and copy manually.");
-});
+      textarea.select();
 
-}
+      document.execCommand("copy");
+
+      textarea.remove();
+
+      document.getElementById("status").textContent =
+        "Result copied to clipboard.";
+
+    }
+  }
+
+
+  /* =========================================================
+     SECURITY / HTML ESCAPING
+  ========================================================= */
+
+  function escapeHTML(value) {
+
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+
+  /* =========================================================
+     INITIALIZE APP
+  ========================================================= */
+
+  setMode(
+    "grammar",
+    document.querySelector(".feature-btn")
+  );
+
+  updateCounter();
 
 </script>
 
