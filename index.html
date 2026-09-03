@@ -4,143 +4,1541 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>LexiCorrect - All in One Writing Tool</title>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,Arial,sans-serif;min-height:100vh;background:linear-gradient(135deg,#0f172a,#312e81,#581c87);color:#fff;padding:20px 15px}
-.container{width:min(1000px,100%);margin:auto}
+
+body{
+font-family:Inter,Arial,sans-serif;
+min-height:100vh;
+background:linear-gradient(135deg,#0f172a,#312e81,#581c87);
+color:#fff;
+padding:20px 15px
+}
+
+.container{width:min(1050px,100%);margin:auto}
+
 header{text-align:center;margin-bottom:20px}
 header h1{font-size:clamp(1.8rem,5vw,3rem)}
-header p{color:#cbd5e1}
-.card{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(15px);border-radius:20px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,0.3)}
-.top-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px;background:rgba(255,255,255,0.12);padding:12px;border-radius:12px}
-.top-bar select,.top-bar input,.top-bar button{padding:8px 12px;border-radius:8px;border:none;font-weight:600;cursor:pointer}
-textarea{width:100%;min-height:130px;border:none;outline:none;border-radius:14px;padding:14px;font-size:15px;background:rgba(255,255,255,0.95);color:#111827;margin-bottom:12px}
-.feature-btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:15px}
-.feature-btns button{padding:12px;background:#e5e7eb;color:#111827}
-.feature-btns button.active{background:#8b5cf6;color:#fff}
-.generate-btn{width:100%;background:linear-gradient(90deg,#8b5cf6,#ec4899);color:#fff;padding:14px;font-size:16px}
-.output{margin-top:20px;display:none}
-.result{background:#f8fafc;color:#1e293b;border-radius:14px;padding:18px;min-height:180px;white-space:pre-wrap;line-height:1.6}
-.badge{padding:4px 8px;border-radius:20px;font-size:12px;background:#22c55e;color:#fff;margin-left:6px}
+header p{color:#cbd5e1;margin-top:5px}
+
+.card{
+background:rgba(255,255,255,0.1);
+border:1px solid rgba(255,255,255,0.15);
+backdrop-filter:blur(15px);
+border-radius:20px;
+padding:20px;
+box-shadow:0 20px 50px rgba(0,0,0,0.3)
+}
+
+.top-bar{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin-bottom:15px;
+background:rgba(255,255,255,0.12);
+padding:12px;
+border-radius:12px
+}
+
+.top-bar select,
+.top-bar input,
+.top-bar button{
+padding:8px 12px;
+border-radius:8px;
+border:none;
+font-weight:600;
+cursor:pointer
+}
+
+textarea{
+width:100%;
+min-height:150px;
+border:none;
+outline:none;
+border-radius:14px;
+padding:14px;
+font-size:15px;
+background:rgba(255,255,255,0.95);
+color:#111827;
+margin-bottom:12px;
+resize:vertical
+}
+
+.feature-btns{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+gap:8px;
+margin-bottom:15px
+}
+
+.feature-btns button{
+padding:12px;
+background:#e5e7eb;
+color:#111827;
+border:none;
+border-radius:9px;
+font-weight:600;
+cursor:pointer;
+transition:.2s
+}
+
+.feature-btns button:hover{
+transform:translateY(-1px)
+}
+
+.feature-btns button.active{
+background:#8b5cf6;
+color:#fff
+}
+
+.generate-btn{
+width:100%;
+background:linear-gradient(90deg,#8b5cf6,#ec4899);
+color:#fff;
+padding:14px;
+font-size:16px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:700
+}
+
+.output{
+margin-top:20px;
+display:none
+}
+
+.result{
+background:#f8fafc;
+color:#1e293b;
+border-radius:14px;
+padding:18px;
+min-height:180px;
+white-space:pre-wrap;
+line-height:1.6;
+overflow-wrap:anywhere
+}
+
+.result h3{
+margin-bottom:8px
+}
+
+.badge{
+padding:4px 8px;
+border-radius:20px;
+font-size:12px;
+background:#22c55e;
+color:#fff;
+margin-left:6px
+}
+
+.option-area{
+display:none;
+margin-bottom:12px;
+background:rgba(255,255,255,.08);
+padding:12px;
+border-radius:12px
+}
+
+.option-area label{
+font-size:13px;
+color:#cbd5e1;
+display:block;
+margin-bottom:5px
+}
+
+.option-area input,
+.option-area select{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:none;
+margin-bottom:8px
+}
+
+.inline-options{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+gap:8px
+}
+
+.small-btn{
+padding:9px 12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:600
+}
+
+.tone-btn{
+padding:9px 12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:600
+}
+
+.tone-btn.active{
+background:#8b5cf6;
+color:#fff
+}
+
+#extraInfo{
+color:#cbd5e1;
+font-size:13px;
+margin-top:10px
+}
+
+.footer-note{
+text-align:center;
+font-size:12px;
+color:#cbd5e1;
+margin-top:15px
+}
 </style>
 </head>
+
 <body>
+
 <div class="container">
-<header><h1>✨ LexiCorrect Pro</h1><p>Grammar | Plagiarism | Rewriter | Tone | Summarizer + PDF + Voice + Bengali</p></header>
+
+<header>
+<h1>✨ LexiCorrect Pro</h1>
+<p>
+Grammar | Plagiarism | Rewriter | Tone | Summarizer |
+Letter | Application | Translation | Resume | Story | Vocab
+</p>
+</header>
+
 <div class="card">
+
 <div class="top-bar">
+
 <input type="file" id="pdfUpload" accept=".pdf"/>
-<select id="languageSelect"><option value="en-US">English</option><option value="bn-IN">Bengali</option><option value="hi-IN">Hindi</option></select>
-<button id="voiceBtn" onclick="startVoice()" style="background:#22c55e;color:#fff">🎤 Speak</button>
+
+<select id="languageSelect">
+<option value="en-US">English</option>
+<option value="bn-IN">Bengali</option>
+<option value="hi-IN">Hindi</option>
+</select>
+
+<button id="voiceBtn"
+onclick="startVoice()"
+style="background:#22c55e;color:#fff">
+🎤 Speak
+</button>
+
 </div>
-<textarea id="topic" placeholder="Write or upload PDF or speak... Example: I has went to school yesterday..."></textarea>
+
+<textarea
+id="topic"
+placeholder="Write your text here... Example: I has went to school yesterday."
+></textarea>
+
+
+<!-- ALL FEATURES -->
 
 <div class="feature-btns">
-<button onclick="setMode('grammar')" id="btn-grammar" class="active">1. Grammar Check</button>
-<button onclick="setMode('plagiarism')" id="btn-plagiarism">2. Plagiarism Check</button>
-<button onclick="setMode('rewrite')" id="btn-rewrite">3. AI Rewriter</button>
-<button onclick="setMode('tone')" id="btn-tone">4. Tone Changer</button>
-<button onclick="setMode('summary')" id="btn-summary">5. Summarizer</button>
+
+<button onclick="setMode('grammar')" id="btn-grammar" class="active">
+1. Grammar Check
+</button>
+
+<button onclick="setMode('plagiarism')" id="btn-plagiarism">
+2. Plagiarism Check
+</button>
+
+<button onclick="setMode('rewrite')" id="btn-rewrite">
+3. AI Rewriter
+</button>
+
+<button onclick="setMode('tone')" id="btn-tone">
+4. Tone Changer
+</button>
+
+<button onclick="setMode('summary')" id="btn-summary">
+5. Summarizer
+</button>
+
+<button onclick="setMode('letter')" id="btn-letter">
+6. Letter Writer
+</button>
+
+<button onclick="setMode('application')" id="btn-application">
+7. Application
+</button>
+
+<button onclick="setMode('enbn')" id="btn-enbn">
+8. EN → BEN
+</button>
+
+<button onclick="setMode('resume')" id="btn-resume">
+9. Resume
+</button>
+
+<button onclick="setMode('story')" id="btn-story">
+10. Story / Essay
+</button>
+
+<button onclick="setMode('vocab')" id="btn-vocab">
+11. Vocab
+</button>
+
+<button onclick="setMode('enhi')" id="btn-enhi">
+12. EN → HI
+</button>
+
 </div>
 
-<div id="toneOptions" style="display:none;margin-bottom:12px;gap:8px;">
-<button onclick="setTone('formal')" class="tone-btn active" id="formalBtn">Formal</button>
-<button onclick="setTone('casual')" class="tone-btn" id="casualBtn">Casual</button>
-<button onclick="setTone('professional')" class="tone-btn" id="profBtn">Professional</button>
+
+<!-- TONE OPTIONS -->
+
+<div id="toneOptions" class="option-area">
+
+<div class="inline-options">
+
+<button onclick="setTone('formal')" class="tone-btn active" id="formalBtn">
+Formal
+</button>
+
+<button onclick="setTone('casual')" class="tone-btn" id="casualBtn">
+Casual
+</button>
+
+<button onclick="setTone('professional')" class="tone-btn" id="profBtn">
+Professional
+</button>
+
 </div>
 
-<button class="generate-btn" onclick="processText()">✨ Process Text</button>
+</div>
+
+
+<!-- LETTER OPTIONS -->
+
+<div id="letterOptions" class="option-area">
+
+<label>Letter Type</label>
+
+<select id="letterType">
+<option value="hod">To HOD</option>
+<option value="principal">To Principal</option>
+<option value="headmaster">To Headmaster / Headmistress</option>
+<option value="teacher">To Teacher</option>
+<option value="editor">To Editor</option>
+<option value="manager">To Manager</option>
+</select>
+
+</div>
+
+
+<!-- APPLICATION OPTIONS -->
+
+<div id="applicationOptions" class="option-area">
+
+<div class="inline-options">
+
+<div>
+<label>Institution</label>
+<select id="institutionType">
+<option value="auto">Auto Detect</option>
+<option value="school">School</option>
+<option value="college">College</option>
+</select>
+</div>
+
+<div>
+<label>Application Type</label>
+<select id="applicationType">
+<option value="leave">Leave Application</option>
+<option value="fee">Fee Concession</option>
+<option value="certificate">Certificate Request</option>
+<option value="transfer">Transfer Certificate</option>
+<option value="general">General Application</option>
+</select>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- RESUME OPTIONS -->
+
+<div id="resumeOptions" class="option-area">
+
+<label>
+Enter your resume information
+</label>
+
+<div class="inline-options">
+
+<input id="resumeName" placeholder="Full Name">
+<input id="resumeEmail" placeholder="Email">
+<input id="resumePhone" placeholder="Phone">
+<input id="resumeEducation" placeholder="Education">
+<input id="resumeSkills" placeholder="Skills">
+<input id="resumeExperience" placeholder="Experience">
+<input id="resumeAddress" placeholder="Address">
+
+</div>
+
+</div>
+
+
+<!-- STORY OPTIONS -->
+
+<div id="storyOptions" class="option-area">
+
+<div class="inline-options">
+
+<div>
+<label>Content Type</label>
+
+<select id="storyType">
+<option value="story">Short Story</option>
+<option value="essay">Essay</option>
+<option value="paragraph">Paragraph</option>
+<option value="speech">Speech</option>
+</select>
+</div>
+
+<div>
+<label>Length</label>
+
+<select id="storyLength">
+<option value="short">Short</option>
+<option value="medium">Medium</option>
+<option value="long">Long</option>
+</select>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- VOCAB OPTIONS -->
+
+<div id="vocabOptions" class="option-area">
+
+<label>
+Enter one English word
+</label>
+
+<input
+id="vocabWord"
+placeholder="Example: Beautiful"
+/>
+
+</div>
+
+
+<button class="generate-btn" onclick="processText()">
+✨ Process Text
+</button>
+
+
+<!-- OUTPUT -->
 
 <div class="output" id="output">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 id="outputTitle">Result</h3><button onclick="copyText()">📋 Copy</button></div>
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+gap:10px;
+">
+
+<h3 id="outputTitle">Result</h3>
+
+<button
+onclick="copyText()"
+class="small-btn"
+>
+📋 Copy
+</button>
+
+</div>
+
 <div class="result" id="result"></div>
-<div id="extraInfo" style="margin-top:10px;color:#cbd5e1;font-size:13px"></div>
+
+<div id="extraInfo"></div>
+
+</div>
+
+<div class="footer-note">
+LexiCorrect Pro • Writing Assistant
+</div>
+
 </div>
 </div>
-</div>
+
 
 <script>
-let mode="grammar", selectedTone="formal", selectedLang="en-US";
-document.getElementById('languageSelect').addEventListener('change',e=>selectedLang=e.target.value);
 
-// PDF
-document.getElementById('pdfUpload').addEventListener('change',async e=>{
- const file=e.target.files[0]; if(!file)return;
- const pdf=await pdfjsLib.getDocument(URL.createObjectURL(file)).promise;
- let txt=""; for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i);const c=await p.getTextContent();txt+=c.items.map(x=>x.str).join(' ')+"\n";}
- document.getElementById('topic').value=txt.substring(0,4000);
+let mode="grammar";
+let selectedTone="formal";
+let selectedLang="en-US";
+
+const topic=document.getElementById("topic");
+const result=document.getElementById("result");
+const output=document.getElementById("output");
+const extraInfo=document.getElementById("extraInfo");
+
+document.getElementById("languageSelect")
+.addEventListener("change",e=>{
+selectedLang=e.target.value;
 });
 
-// VOICE
-function startVoice(){
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){alert("Use Chrome");return;}
- const r=new SR(); r.lang=selectedLang; r.onstart=()=>voiceBtn.innerText="🔴 Listening"; r.onend=()=>voiceBtn.innerText="🎤 Speak";
- r.onresult=e=>{topic.value+=" "+e.results[0][0].transcript}; r.start();
+
+/* =========================
+   PDF READER
+========================= */
+
+document.getElementById("pdfUpload")
+.addEventListener("change",async e=>{
+
+const file=e.target.files[0];
+
+if(!file)return;
+
+try{
+
+const pdf=await pdfjsLib
+.getDocument(URL.createObjectURL(file))
+.promise;
+
+let txt="";
+
+for(let i=1;i<=pdf.numPages;i++){
+
+const p=await pdf.getPage(i);
+
+const c=await p.getTextContent();
+
+txt+=c.items.map(x=>x.str).join(" ")+"\n";
+
 }
+
+topic.value=txt.substring(0,8000);
+
+}catch(err){
+
+alert("Could not read this PDF.");
+
+}
+
+});
+
+
+/* =========================
+   VOICE
+========================= */
+
+function startVoice(){
+
+const SR=
+window.SpeechRecognition||
+window.webkitSpeechRecognition;
+
+if(!SR){
+
+alert("Speech recognition is not supported. Please use Google Chrome.");
+
+return;
+}
+
+const r=new SR();
+
+r.lang=selectedLang;
+
+r.onstart=()=>{
+document.getElementById("voiceBtn").innerText="🔴 Listening";
+};
+
+r.onend=()=>{
+document.getElementById("voiceBtn").innerText="🎤 Speak";
+};
+
+r.onerror=()=>{
+document.getElementById("voiceBtn").innerText="🎤 Speak";
+};
+
+r.onresult=e=>{
+
+topic.value+=" "+e.results[0][0].transcript;
+
+};
+
+r.start();
+
+}
+
+
+/* =========================
+   MODE
+========================= */
 
 function setMode(m){
- mode=m; document.querySelectorAll('.feature-btns button').forEach(b=>b.classList.remove('active'));
- document.getElementById('btn-'+m).classList.add('active');
- document.getElementById('toneOptions').style.display = m==='tone'?'flex':'none';
- document.getElementById('outputTitle').innerText = m.toUpperCase();
+
+mode=m;
+
+document
+.querySelectorAll(".feature-btns button")
+.forEach(b=>b.classList.remove("active"));
+
+document
+.getElementById("btn-"+m)
+.classList.add("active");
+
+
+/* hide every option */
+
+document
+.querySelectorAll(".option-area")
+.forEach(x=>x.style.display="none");
+
+
+/* show required option */
+
+if(m==="tone")
+document.getElementById("toneOptions").style.display="block";
+
+if(m==="letter")
+document.getElementById("letterOptions").style.display="block";
+
+if(m==="application")
+document.getElementById("applicationOptions").style.display="block";
+
+if(m==="resume")
+document.getElementById("resumeOptions").style.display="block";
+
+if(m==="story")
+document.getElementById("storyOptions").style.display="block";
+
+if(m==="vocab")
+document.getElementById("vocabOptions").style.display="block";
+
+
+const titles={
+grammar:"GRAMMAR CHECK",
+plagiarism:"PLAGIARISM CHECK",
+rewrite:"AI REWRITER",
+tone:"TONE CHANGER",
+summary:"SUMMARIZER",
+letter:"LETTER WRITER",
+application:"APPLICATION",
+enbn:"ENGLISH → BENGALI",
+resume:"RESUME",
+story:"STORY / ESSAY",
+vocab:"VOCABULARY",
+enhi:"ENGLISH → HINDI"
+};
+
+document.getElementById("outputTitle").innerText=titles[m]||"RESULT";
+
 }
+
+
+/* =========================
+   TONE
+========================= */
+
 function setTone(t){
- selectedTone=t; document.querySelectorAll('.tone-btn').forEach(b=>b.classList.remove('active'));
- if(t==='formal')formalBtn.classList.add('active'); if(t==='casual')casualBtn.classList.add('active'); if(t==='professional')profBtn.classList.add('active');
+
+selectedTone=t;
+
+document
+.querySelectorAll(".tone-btn")
+.forEach(b=>b.classList.remove("active"));
+
+if(t==="formal")
+document.getElementById("formalBtn").classList.add("active");
+
+if(t==="casual")
+document.getElementById("casualBtn").classList.add("active");
+
+if(t==="professional")
+document.getElementById("profBtn").classList.add("active");
+
 }
+
+
+/* =========================
+   MAIN PROCESS
+========================= */
 
 async function processText(){
- const text=topic.value.trim(); if(!text){alert("Enter text first");return;}
- const out=document.getElementById('output'), res=document.getElementById('result'), extra=document.getElementById('extraInfo');
- out.style.display='block'; res.innerText="Processing..."; extra.innerText="";
 
- if(mode==='grammar'){
-   try{
-     const form=new FormData(); form.append('text',text); form.append('language',selectedLang==='bn-IN'?'bn':selectedLang==='hi-IN'?'hi':'en-US');
-     const resp=await fetch('https://api.languagetool.org/v2/check',{method:'POST',body:form});
-     const data=await resp.json();
-     if(data.matches.length===0){res.innerText="✅ No grammar mistakes! Your text is perfect.\n\nOriginal:\n"+text; extra.innerText=`Checked: ${text.split(' ').length} words`;}
-     else{
-       let fixed=text, issues="";
-       data.matches.slice(0,5).forEach(m=>{
-         issues+=`• ${m.message} -> ${m.replacements[0]?.value||''}\n`;
-         if(m.replacements[0]) fixed=fixed.replace(m.context.text.substring(m.context.offset,m.context.offset+m.context.length),m.replacements[0].value);
-       });
-       res.innerText=`ISSUES FOUND:\n${issues}\n\nSUGGESTED FIX:\n${fixed}`;
-       extra.innerText=`Found ${data.matches.length} issues`;
-     }
-   }catch(e){ // Fallback simple check
-     let fixed=text.replace(/\bI has\b/gi,"I have").replace(/\bI is\b/gi,"I am");
-     res.innerText=`Grammar Check (Offline Mode):\n\nOriginal: ${text}\n\nCorrected: ${fixed}`;
-   }
- }
- else if(mode==='plagiarism'){
-   const score=Math.floor(Math.random()*30)+5;
-   res.innerText=`Plagiarism Report\n\nOriginality: ${100-score}% ✅\nPlagiarism: ${score}% \n\nStatus: ${score<20?'Safe - Your content is unique!':'Needs review'}\n\nChecked ${text.split(' ').length} words against web database.`;
-   extra.innerText="Note: Demo plagiarism checker for hackathon (uses mock data)";
- }
- else if(mode==='rewrite'){
-   let rewritten=text.replace(/\bvery good\b/gi,"excellent").replace(/\bvery bad\b/gi,"terrible").replace(/\bI want\b/gi,"I would like").replace(/\bimportant\b/gi,"crucial").replace(/\bhelp\b/gi,"assist");
-   rewritten = `Paraphrased Version:\n\n${rewritten}\n\nAlternative:\n${text.split('.').map(s=>s.trim()?`-> ${s.trim()} (rephrased)`:'' ).join('\n')}`;
-   res.innerText=rewritten;
- }
- else if(mode==='tone'){
-   let outText="";
-   if(selectedTone==='formal') outText=`Subject: Regarding your request\n\nDear Sir/Madam,\n\n${text}\n\nI would be grateful for your kind consideration.\n\nYours faithfully,\n[Your Name]`;
-   else if(selectedTone==='casual') outText=`Hey!\n\n${text}\n\nThanks a lot! Let me know 😊\n\nCheers!`;
-   else outText=`Professional Draft:\n\n${text}\n\nThis demonstrates strong communication and proactive approach. Looking forward to collaboration.\n\nBest regards,\n[Your Name]`;
-   res.innerText=outText;
- }
- else if(mode==='summary'){
-   const sentences=text.split('.').filter(s=>s.trim().length>10);
-   const keep=Math.max(1,Math.floor(sentences.length*0.4));
-   const summary=sentences.slice(0,keep).join('. ')+'.';
-   res.innerText=`Summary (${keep} of ${sentences.length} sentences):\n\n${summary}\n\nOriginal length: ${text.split(' ').length} words -> Summary: ${summary.split(' ').length} words (${Math.round((1-summary.split(' ').length/text.split(' ').length)*100)}% reduced)`;
- }
+let text=topic.value.trim();
+
+
+if(mode==="vocab"){
+
+text=document.getElementById("vocabWord").value.trim();
+
 }
 
-function copyText(){navigator.clipboard.writeText(result.innerText).then(()=>alert("Copied!"))}
+if(!text){
+
+alert("Enter text first.");
+
+return;
+
+}
+
+output.style.display="block";
+
+result.innerText="Processing...";
+
+extraInfo.innerText="";
+
+
+/* =========================
+   1. GRAMMAR
+========================= */
+
+if(mode==="grammar"){
+
+try{
+
+const form=new FormData();
+
+form.append("text",text);
+
+form.append(
+"language",
+selectedLang==="bn-IN"
+?"bn":
+selectedLang==="hi-IN"
+?"hi":
+"en-US"
+);
+
+const resp=await fetch(
+"https://api.languagetool.org/v2/check",
+{
+method:"POST",
+body:form
+}
+);
+
+const data=await resp.json();
+
+if(data.matches.length===0){
+
+result.innerText=
+"✅ No grammar mistakes!\n\n"+
+"Original:\n"+text;
+
+extraInfo.innerText=
+`Checked: ${text.split(/\s+/).length} words`;
+
+}else{
+
+let fixed=text;
+
+let issues="";
+
+data.matches.slice(0,8).forEach(m=>{
+
+issues+=
+`• ${m.message} → ${
+m.replacements[0]?.value||""
+}\n`;
+
+if(m.replacements[0]){
+
+fixed=fixed.replace(
+m.context.text.substring(
+m.context.offset,
+m.context.offset+m.context.length
+),
+m.replacements[0].value
+);
+
+}
+
+});
+
+result.innerText=
+`ISSUES FOUND:\n${issues}\n`+
+`SUGGESTED FIX:\n${fixed}`;
+
+extraInfo.innerText=
+`Found ${data.matches.length} issue(s)`;
+
+}
+
+}catch(e){
+
+let fixed=text
+.replace(/\bI has\b/gi,"I have")
+.replace(/\bI is\b/gi,"I am")
+.replace(/\bI are\b/gi,"I am")
+.replace(/\bhe have\b/gi,"he has")
+.replace(/\bshe have\b/gi,"she has")
+.replace(/\bthey was\b/gi,"they were")
+.replace(/\bwe was\b/gi,"we were")
+.replace(/\bdid not went\b/gi,"did not go");
+
+result.innerText=
+`Grammar Check (Offline Mode)\n\n`+
+`Original:\n${text}\n\n`+
+`Corrected:\n${fixed}`;
+
+}
+
+}
+
+
+/* =========================
+   2. PLAGIARISM
+========================= */
+
+else if(mode==="plagiarism"){
+
+const score=
+Math.floor(Math.random()*10)+5;
+
+const originality=100-score;
+
+result.innerText=
+`PLAGIARISM REPORT\n\n`+
+`Originality Score: ${originality}% ✅\n`+
+`Estimated Plagiarism: ${score}%\n\n`+
+`Status: ${
+score<20
+?"SAFE - Your content appears highly original."
+:"NEEDS REVIEW"
+}\n\n`+
+`Words Checked: ${text.split(/\s+/).length}`;
+
+extraInfo.innerText=
+"Demo mode: real plagiarism detection requires a plagiarism API/backend.";
+
+}
+
+
+/* =========================
+   3. REWRITER
+========================= */
+
+else if(mode==="rewrite"){
+
+let v1=text
+.replace(/\bvery good\b/gi,"excellent")
+.replace(/\bvery bad\b/gi,"extremely poor")
+.replace(/\bI want\b/gi,"I would like")
+.replace(/\bimportant\b/gi,"crucial")
+.replace(/\bhelp\b/gi,"assist");
+
+let v2=text
+.replace(/\bvery good\b/gi,"highly effective")
+.replace(/\bI want\b/gi,"I wish to")
+.replace(/\bhelp\b/gi,"support")
+.replace(/\bimportant\b/gi,"significant");
+
+let v3=text
+.replace(/\bvery good\b/gi,"outstanding")
+.replace(/\bI want\b/gi,"I am interested in")
+.replace(/\bhelp\b/gi,"provide assistance")
+.replace(/\bimportant\b/gi,"essential");
+
+result.innerText=
+`VERSION 1 — NATURAL\n\n${v1}\n\n`+
+`VERSION 2 — PROFESSIONAL\n\n${v2}\n\n`+
+`VERSION 3 — ADVANCED\n\n${v3}`;
+
+extraInfo.innerText="3 rewritten versions generated.";
+
+}
+
+
+/* =========================
+   4. TONE
+========================= */
+
+else if(mode==="tone"){
+
+let outText="";
+
+if(selectedTone==="formal"){
+
+outText=
+`FORMAL VERSION\n\n`+
+`Dear Sir/Madam,\n\n`+
+`${text}\n\n`+
+`I would be grateful for your kind consideration of this matter.\n\n`+
+`Yours faithfully,\n`+
+`[Your Name]`;
+
+}
+
+else if(selectedTone==="casual"){
+
+outText=
+`CASUAL VERSION\n\n`+
+`Hey!\n\n${text}\n\n`+
+`Thanks a lot! Let me know 😊\n\n`+
+`Cheers!\n[Your Name]`;
+
+}
+
+else{
+
+outText=
+`PROFESSIONAL VERSION\n\n`+
+`${text}\n\n`+
+`This matter demonstrates a proactive and constructive approach. `+
+`I look forward to your response and further discussion.\n\n`+
+`Best regards,\n[Your Name]`;
+
+}
+
+result.innerText=outText;
+
+}
+
+
+/* =========================
+   5. SUMMARY
+========================= */
+
+else if(mode==="summary"){
+
+const sentences=text
+.split(/[.!?]+/)
+.filter(s=>s.trim().length>10);
+
+const keep=Math.max(
+1,
+Math.ceil(sentences.length*.4)
+);
+
+const summary=
+sentences
+.slice(0,keep)
+.map(s=>s.trim())
+.join(". ")+
+".";
+
+const originalWords=text.split(/\s+/).length;
+
+const summaryWords=
+summary.split(/\s+/).length;
+
+const reduction=
+Math.max(
+0,
+Math.round(
+(1-summaryWords/originalWords)*100
+)
+);
+
+result.innerText=
+`SHORT SUMMARY\n\n${summary}\n\n`+
+`Original: ${originalWords} words\n`+
+`Summary: ${summaryWords} words\n`+
+`Reduced by: ${reduction}%`;
+
+}
+
+
+/* =========================
+   6. LETTER WRITER
+========================= */
+
+else if(mode==="letter"){
+
+const type=
+document.getElementById("letterType").value;
+
+let receiver="The Head of the Department";
+
+if(type==="principal")
+receiver="The Principal";
+
+if(type==="headmaster")
+receiver="The Headmaster / Headmistress";
+
+if(type==="teacher")
+receiver="The Class Teacher";
+
+if(type==="editor")
+receiver="The Editor";
+
+if(type==="manager")
+receiver="The Manager";
+
+result.innerText=
+`To\n`+
+`${receiver}\n`+
+`[Institution / Organization Name]\n`+
+`[Address]\n\n`+
+`Date: [DD/MM/YYYY]\n\n`+
+`Subject: ${makeSubject(text)}\n\n`+
+`Respected Sir/Madam,\n\n`+
+`${text}\n\n`+
+`I therefore request you to kindly consider my request and take the necessary action at your earliest convenience.\n\n`+
+`Thanking you.\n\n`+
+`Yours faithfully,\n`+
+`[Your Name]\n`+
+`[Class / Department]\n`+
+`[Roll No. / ID]`;
+
+extraInfo.innerText=
+"Complete formal letter format generated.";
+
+}
+
+
+/* =========================
+   7. APPLICATION
+========================= */
+
+else if(mode==="application"){
+
+let institution=
+document.getElementById("institutionType").value;
+
+let appType=
+document.getElementById("applicationType").value;
+
+if(institution==="auto"){
+
+const lower=text.toLowerCase();
+
+if(
+lower.includes("college")||
+lower.includes("university")||
+lower.includes("semester")||
+lower.includes("department")
+){
+
+institution="college";
+
+}else{
+
+institution="school";
+
+}
+
+}
+
+let authority=
+institution==="college"
+?"The Principal / HOD"
+:"The Headmaster / Headmistress";
+
+let subject="Application regarding the matter mentioned below";
+
+if(appType==="leave")
+subject="Application for Leave";
+
+if(appType==="fee")
+subject="Application for Fee Concession";
+
+if(appType==="certificate")
+subject="Application for Certificate";
+
+if(appType==="transfer")
+subject="Application for Transfer Certificate";
+
+result.innerText=
+`To\n`+
+`${authority}\n`+
+`[${institution==="college"?"College":"School"} Name]\n`+
+`[Address]\n\n`+
+`Date: [DD/MM/YYYY]\n\n`+
+`Subject: ${subject}\n\n`+
+`Respected Sir/Madam,\n\n`+
+`I am a student of your ${institution}. `+
+`${text}\n\n`+
+`I kindly request you to consider my application and grant my request.\n\n`+
+`I shall be highly obliged for your kind consideration.\n\n`+
+`Thanking you.\n\n`+
+`Yours obediently,\n`+
+`[Your Name]\n`+
+`Class: [Class]\n`+
+`Roll No.: [Roll]\n`+
+`Date: [Date]`;
+
+extraInfo.innerText=
+`Detected institution: ${
+institution==="college"?"College":"School"
+}`;
+
+}
+
+
+/* =========================
+   8. ENGLISH → BENGALI
+========================= */
+
+else if(mode==="enbn"){
+
+await translateText(
+text,
+"en",
+"bn"
+);
+
+}
+
+
+/* =========================
+   9. RESUME
+========================= */
+
+else if(mode==="resume"){
+
+const name=
+document.getElementById("resumeName").value||"[FULL NAME]";
+
+const email=
+document.getElementById("resumeEmail").value||"[EMAIL]";
+
+const phone=
+document.getElementById("resumePhone").value||"[PHONE]";
+
+const education=
+document.getElementById("resumeEducation").value||
+"[Your Educational Qualification]";
+
+const skills=
+document.getElementById("resumeSkills").value||
+"[Communication, MS Office, Teamwork]";
+
+const experience=
+document.getElementById("resumeExperience").value||
+"[Fresher / Your Work Experience]";
+
+const address=
+document.getElementById("resumeAddress").value||
+"[Address]";
+
+result.innerText=
+`${name.toUpperCase()}\n`+
+`${address}\n`+
+`Phone: ${phone}\n`+
+`Email: ${email}\n\n`+
+
+`CAREER OBJECTIVE\n`+
+`--------------------------------\n`+
+`${text}\n\n`+
+
+`EDUCATION\n`+
+`--------------------------------\n`+
+`${education}\n\n`+
+
+`SKILLS\n`+
+`--------------------------------\n`+
+`${formatList(skills)}\n\n`+
+
+`EXPERIENCE\n`+
+`--------------------------------\n`+
+`${experience}\n\n`+
+
+`PERSONAL DETAILS\n`+
+`--------------------------------\n`+
+`Name: ${name}\n`+
+`Email: ${email}\n`+
+`Phone: ${phone}\n\n`+
+
+`DECLARATION\n`+
+`--------------------------------\n`+
+`I hereby declare that the information provided above is true and correct to the best of my knowledge.\n\n`+
+`Date: [Date]\n`+
+`Place: [Place]\n\n`+
+`Signature\n`+
+`${name}`;
+
+extraInfo.innerText=
+"Resume draft generated from your information.";
+
+}
+
+
+/* =========================
+   10. STORY / ESSAY
+========================= */
+
+else if(mode==="story"){
+
+const type=
+document.getElementById("storyType").value;
+
+const length=
+document.getElementById("storyLength").value;
+
+let paragraphs=3;
+
+if(length==="medium")paragraphs=5;
+if(length==="long")paragraphs=8;
+
+let title=
+text.length<80
+?text
+:"A Meaningful Journey";
+
+if(type==="essay"){
+
+result.innerText=
+`${title}\n\n`+
+generateEssay(text,paragraphs);
+
+}
+
+else if(type==="paragraph"){
+
+result.innerText=
+`${title}\n\n`+
+generateParagraph(text,paragraphs);
+
+}
+
+else if(type==="speech"){
+
+result.innerText=
+`SPEECH ON: ${title}\n\n`+
+`Respected Principal, teachers and my dear friends,\n\n`+
+generateSpeech(text,paragraphs)+
+`\n\nThank you.`;
+
+}
+
+else{
+
+result.innerText=
+`${title}\n\n`+
+generateStory(text,paragraphs);
+
+}
+
+extraInfo.innerText=
+`${type.toUpperCase()} generated in ${length} format.`;
+
+}
+
+
+/* =========================
+   11. VOCAB
+========================= */
+
+else if(mode==="vocab"){
+
+await getVocabulary(text);
+
+}
+
+
+/* =========================
+   12. ENGLISH → HINDI
+========================= */
+
+else if(mode==="enhi"){
+
+await translateText(
+text,
+"en",
+"hi"
+);
+
+}
+
+}
+
+
+/* =========================
+   LETTER SUBJECT
+========================= */
+
+function makeSubject(text){
+
+const t=text.toLowerCase();
+
+if(t.includes("leave"))
+return "Request for Leave";
+
+if(t.includes("admission"))
+return "Regarding Admission";
+
+if(t.includes("fee"))
+return "Regarding Fee";
+
+if(t.includes("certificate"))
+return "Request for Certificate";
+
+if(t.includes("permission"))
+return "Request for Permission";
+
+if(t.includes("complaint"))
+return "Regarding a Complaint";
+
+return "Regarding the Matter Mentioned Below";
+
+}
+
+
+/* =========================
+   TRANSLATION
+   MyMemory API
+========================= */
+
+async function translateText(text,from,to){
+
+try{
+
+result.innerText="Translating...";
+
+const url=
+"https://api.mymemory.translated.net/get?"+
+"q="+encodeURIComponent(text)+
+"&langpair="+from+"|"+to;
+
+const response=await fetch(url);
+
+const data=await response.json();
+
+if(
+data.responseStatus===200 &&
+data.responseData &&
+data.responseData.translatedText
+){
+
+result.innerText=
+`TRANSLATED TEXT\n\n`+
+data.responseData.translatedText;
+
+extraInfo.innerText=
+`Translation: English → ${
+to==="bn"?"Bengali":"Hindi"
+}`;
+
+}else{
+
+throw new Error("Translation failed");
+
+}
+
+}catch(e){
+
+result.innerText=
+"Translation service is temporarily unavailable.\n\n"+
+"Please check your internet connection and try again.";
+
+extraInfo.innerText=
+"Online translation API could not be reached.";
+
+}
+
+}
+
+
+/* =========================
+   VOCABULARY API
+========================= */
+
+async function getVocabulary(word){
+
+try{
+
+result.innerText="Finding meaning...";
+
+const response=
+await fetch(
+"https://api.dictionaryapi.dev/api/v2/entries/en/"+
+encodeURIComponent(word)
+);
+
+if(!response.ok)
+throw new Error("Word not found");
+
+const data=await response.json();
+
+const entry=data[0];
+
+let output=
+`WORD: ${entry.word}\n\n`;
+
+if(entry.phonetic)
+output+=
+`Pronunciation: ${entry.phonetic}\n\n`;
+
+const meanings=entry.meanings||[];
+
+meanings.slice(0,4).forEach((m,i)=>{
+
+output+=
+`${i+1}. ${m.partOfSpeech||"Meaning"}\n`;
+
+(m.definitions||[])
+.slice(0,2)
+.forEach(d=>{
+
+output+=
+`• Meaning: ${d.definition}\n`;
+
+if(d.example)
+output+=
+`• Example: ${d.example}\n`;
+
+});
+
+output+="\n";
+
+});
+
+result.innerText=output;
+
+extraInfo.innerText=
+"Meaning fetched from online dictionary.";
+
+}catch(e){
+
+result.innerText=
+`VOCABULARY\n\n`+
+`Word: ${word}\n\n`+
+`Meaning could not be fetched right now.\n`+
+`Please check the spelling or internet connection.`;
+
+}
+
+}
+
+
+/* =========================
+   RESUME LIST
+========================= */
+
+function formatList(value){
+
+return value
+.split(",")
+.map(x=>"• "+x.trim())
+.join("\n");
+
+}
+
+
+/* =========================
+   STORY GENERATOR
+========================= */
+
+function generateStory(topic,paragraphs){
+
+const ideas=[
+`One day, the main character decided to face a difficult situation connected with "${topic}". At first, everything seemed uncertain, but there was a strong desire to find a solution.`,
+
+`The journey was not easy. Several problems appeared along the way, and each problem taught an important lesson about patience, courage and determination.`,
+
+`After thinking carefully, the character understood that every challenge could become an opportunity to learn something new. Instead of giving up, a positive step was taken.`,
+
+`Slowly, the situation began to change. Friends, teachers or family members offered support, and the character also discovered confidence within themselves.`,
+
+`Finally, the challenge was overcome. The experience proved that success does not always come immediately, but sincere effort and a positive attitude can make a great difference.`,
+
+`From that day onward, the character looked at life differently. The experience became a memorable lesson that would remain valuable for years to come.`,
+
+`The story also reminded everyone that small decisions can sometimes create major changes in life.`,
+
+`In the end, the real victory was not simply achieving the goal, but becoming stronger and wiser during the journey.`
+];
+
+return ideas.slice(0,paragraphs).join("\n\n");
+
+}
+
+
+/* =========================
+   ESSAY GENERATOR
+========================= */
+
+function generateEssay(topic,paragraphs){
+
+const ideas=[
+`"${topic}" is an important topic that deserves careful consideration. It is connected with our daily lives and has an influence on individuals as well as society.`,
+
+`The importance of this subject can be understood from several perspectives. It affects the way people think, behave and make decisions in different situations.`,
+
+`There are many advantages associated with a positive approach to "${topic}". With awareness, education and responsible action, people can make meaningful improvements.`,
+
+`However, there can also be challenges. Lack of awareness, careless decisions and limited opportunities may prevent people from achieving the desired results.`,
+
+`Students and young people can play an important role in creating positive change. They can develop good habits, share knowledge and encourage others to act responsibly.`,
+
+`Society, educational institutions and families also have important responsibilities. Cooperation between different groups can make solutions more practical and effective.`,
+
+`Therefore, it is necessary to understand the subject instead of ignoring it. Small positive actions taken consistently can create significant long-term results.`,
+
+`In conclusion, "${topic}" is not merely a theoretical subject. It is something that can influence our present and future, and everyone can contribute through responsible and thoughtful action.`
+];
+
+return ideas.slice(0,paragraphs).join("\n\n");
+
+}
+
+
+/* =========================
+   PARAGRAPH
+========================= */
+
+function generateParagraph(topic,paragraphs){
+
+return generateEssay(topic,Math.min(paragraphs,4));
+
+}
+
+
+/* =========================
+   SPEECH
+========================= */
+
+function generateSpeech(topic,paragraphs){
+
+const parts=[
+`Today I would like to speak about "${topic}". It is a subject that is important for students and for society as a whole.`,
+
+`We should understand its importance and think about how our actions can create a positive difference. Knowledge becomes valuable when we use it in practical life.`,
+
+`As students, we have the opportunity to learn, improve ourselves and inspire others. Even a small responsible action can become the beginning of a bigger change.`,
+
+`Therefore, let us work together with confidence, discipline and a positive attitude. If we remain determined, we can overcome difficulties and build a better future.`,
+
+`Let us remember that change begins with ourselves. By making better choices today, we can create better opportunities for tomorrow.`,
+
+`Thank you all for listening to me.`
+];
+
+return parts
+.slice(0,Math.min(paragraphs,parts.length))
+.join("\n\n");
+
+}
+
+
+/* =========================
+   COPY
+========================= */
+
+function copyText(){
+
+navigator.clipboard
+.writeText(result.innerText)
+.then(()=>alert("Copied!"))
+.catch(()=>{
+alert("Copy failed. Please select and copy manually.");
+});
+
+}
+
 </script>
+
 </body>
 </html>
